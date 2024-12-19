@@ -71,6 +71,11 @@ app.get('/google3634443e1c428dc1.html', (req, res) => {
   res.setHeader('Content-Disposition', 'inline');
   res.sendFile(filePath);
 });
+//sitemap
+app.get('/sitemap.xml', (req, res) => {
+  const filePath = path.join(__dirname, 'sitemap.xml'); 
+  res.sendFile(filePath);
+});
 
 
 app.listen(PORT, () => {
