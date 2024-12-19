@@ -65,6 +65,13 @@ app.delete('/api/deleteText/:textId', async (req, res) => {
   }
 });
 
+//google route 
+app.get('/google3634443e1c428dc1.html', (req, res) => {
+  const filePath = path.join(__dirname, 'google3634443e1c428dc1.html'); // Path to a local PDF
+  res.setHeader('Content-Disposition', 'inline');
+  res.sendFile(filePath);
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
