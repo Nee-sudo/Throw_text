@@ -1,28 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-<link rel="icon" href="image.png" type="image/x-icon">
-   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <link rel="icon" href="image.png" type="image/x-icon">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="I made this because I don't want to signup or login for text sharing from one pc to another pc">
-  <link rel="stylesheet" type="text/css" href="index.css">
+  <meta name="description" content="A simple text-sharing tool to avoid signing up or logging in for transferring text between devices.">
+  <link rel="stylesheet" href="index.css">
   <title>Simple Text Storage</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+    }
+    .marque-container {
+      background: #f4f4f4;
+      padding: 10px;
+    }
+    .marque {
+      font-size: 14px;
+      color: #333;
+    }
+    #editor {
+      margin: 20px auto;
+      width: 80%;
+      height: 300px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #formattedContent {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <div>
-    <marquee  class="marque" behavior="scroll" direction="right">I made this because I don't want to signup or login for text sharing from one pc to another pc</marquee>
+  <div class="marque-container">
+    <p class="marque">A simple tool to share text without signing up or logging in.</p>
   </div>
-    <header><h1>Throw your text </h1></header>
-    <div id="editor" style="height: 300px;"></div>
- <center> 
+  <header>
+    <h1>Throw Your Text</h1>
+  </header>
+  <div id="editor"></div>
+  <div>
     <button onclick="saveText()">Save Text</button>
     <button onclick="loadTexts()">Load Texts</button>
-</center>
+  </div>
+  <div id="formattedContent"></div>
 
-<div id="formattedContent"></div>
-  <script src="index.js">
-  </script>
+  <script src="index.js"></script>
 </body>
 </html>
