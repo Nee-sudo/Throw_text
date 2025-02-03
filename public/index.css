@@ -37,6 +37,12 @@ body {
     font-weight: bold;
     padding: 1%;
   }
+  .copy{
+    background-color:gray;
+    border-style: none;
+    font-weight: bold;
+    padding: 1%;
+  }
   
   ul {
     list-style-type: none;

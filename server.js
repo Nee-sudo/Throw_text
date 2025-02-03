@@ -6,7 +6,7 @@ require('dotenv').config(); // Load environment variables from .env file
 const app = express();
 const PORT = 3000;
 
-const URI = process.env.MONGO_URI;
+const URI = process.env.MONGO_URI || 'mongodb'; // MongoDB URI  
 // Connect to MongoDB (replace 'your_database_url' with your actual MongoDB URL)
 mongoose.connect(URI, {
   useNewUrlParser: true,
@@ -63,6 +63,27 @@ app.delete('/api/deleteText/:textId', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
+  }
+});
+// API endpoint to get a specific text by ID
+app.get('/api/getText/:textId', async (req, res) => {
+  const { textId } = req.params;
+  console.log('Fetching text with ID:', textId);
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(textId)) {
+      return res.status(400).json({ error: 'Invalid ID format' });
+    }
+
+    const text = await Text.findById(textId);
+    if (!text) {
+      return res.status(404).json({ error: 'Text not found' });
+    }
+
+    res.json(text);
+  } catch (error) {
+    console.error('Database error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 

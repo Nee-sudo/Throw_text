@@ -31,10 +31,10 @@ async function saveText() {
 
     texts.forEach((text) => {
       const listItem = document.createElement('div');
-      // listItem.innerHTML = text.content;
       listItem.innerHTML = `
       <div>${text.content}</div>
       <button class="delete" onclick="deleteText('${text._id}')">Delete</button>
+      <button class="copy" onclick="copyText('${text._id}')">Copy</button>
     `;
       textList.appendChild(listItem);
     });
@@ -56,6 +56,36 @@ async function saveText() {
       // Handle errors if needed
     }
   }
+  async function copyText(textId) {
+    try {
+      const response = await fetch(`http://localhost:3000/api/getText/${textId}`);
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
+  
+      const text = await response.json();
+      console.log('Received text:', text.content);
+  
+      // Function to remove HTML tags
+      function stripHtml(html) {
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+        return doc.body.textContent || "";
+      }
+  
+      const plainText = stripHtml(text.content);
+  
+      // Use Clipboard API to copy clean text
+      await navigator.clipboard.writeText(plainText);
+      alert('Text copied to clipboard');
+  
+    } catch (error) {
+      console.error('Error copying text:', error);
+      alert('Failed to copy text. Check the console for details.');
+    }
+  }
+  
+
   
 
 
