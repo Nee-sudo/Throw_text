@@ -58,7 +58,7 @@ async function saveText() {
   }
   async function copyText(textId) {
     try {
-      const response = await fetch(`http://localhost:3000/api/getText/${textId}`);
+      const response = await fetch(`/api/getText/${textId}`);
   
       if (!response.ok) {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
