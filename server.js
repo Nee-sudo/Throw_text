@@ -5,8 +5,9 @@ const path = require('path');
 require('dotenv').config(); // Load environment variables from .env file
 const app = express();
 const PORT = 3000;
+const requestIp = require('request-ip');
 
-const URI = process.env.MONGO_URI || 'mongodb'; // MongoDB URI  
+const URI = process.env.MONGO_URI || 'mongodb+srv://neer:bjFBXFCYd00Gifiv@my-journal-app.ges8oic.mongodb.net/?retryWrites=true&w=majority'; // MongoDB URI  
 // Connect to MongoDB (replace 'your_database_url' with your actual MongoDB URL)
 mongoose.connect(URI, {
   useNewUrlParser: true,
@@ -22,7 +23,7 @@ const textSchema = new mongoose.Schema({
 const Text = mongoose.model('Text', textSchema);
 
 app.use(bodyParser.json());
-
+app.use(requestIp.mw()); // Middleware to get IP address
 // Serve the HTML file
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -87,6 +88,51 @@ app.get('/api/getText/:textId', async (req, res) => {
   }
 });
 
+// Visitor Schema
+const visitorSchema = new mongoose.Schema({
+  ip: String,
+  visits: { type: Number, default: 1 },
+  lastVisit: { type: Date, default: Date.now }
+});
+
+const Visitor = mongoose.model('Visitor', visitorSchema);
+
+// Track Visitor
+app.get('/api/track-visitor', async (req, res) => {
+  try {
+    const ip = req.clientIp || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    console.log('Visitor IP:', ip);
+
+    let visitor = await Visitor.findOne({ ip });
+
+    if (visitor) {
+      visitor.visits += 1;
+      visitor.lastVisit = new Date();
+      await visitor.save();
+    } else {
+      visitor = new Visitor({ ip });
+      await visitor.save();
+    }
+
+    res.json({ message: 'Visitor tracked', visits: visitor.visits });
+  } catch (error) {
+    console.error('Error tracking visitor:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Get Visitor Stats
+app.get('/api/visitor-stats', async (req, res) => {
+  try {
+    const uniqueVisitors = await Visitor.countDocuments();
+    const frequentVisitors = await Visitor.find().sort({ visits: -1 }).limit(5); // Top 5 frequent visitors
+
+    res.json({ uniqueVisitors, frequentVisitors });
+  } catch (error) {
+    console.error('Error fetching visitor stats:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 //google route 
 app.get('/google3634443e1c428dc1.html', (req, res) => {
   const filePath = path.join(__dirname, 'google3634443e1c428dc1.html'); // Path to a local PDF

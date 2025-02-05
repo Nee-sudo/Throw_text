@@ -84,10 +84,32 @@ async function saveText() {
       alert('Failed to copy text. Check the console for details.');
     }
   }
-  
-
-  
-
-
-
   // Your existing JavaScript code for loading texts can go here
+  // Track visitor on page load
+async function trackVisitor() {
+  try {
+    await fetch('/api/track-visitor');
+  } catch (error) {
+    console.error('Error tracking visitor:', error);
+  }
+}
+
+// Get and display visitor stats
+async function loadVisitorStats() {
+  try {
+    const response = await fetch('/api/visitor-stats');
+    const data = await response.json();
+
+    document.getElementById('unique-visitors').innerText = `Unique Visitors: ${data.uniqueVisitors}`;
+    document.getElementById('frequent-visitors').innerText = `Frequent Visitors: ${JSON.stringify(data.frequentVisitors)}`;
+  } catch (error) {
+    console.error('Error loading visitor stats:', error);
+  }
+}
+
+// Call functions on page load
+window.onload = () => {
+  trackVisitor();
+  loadVisitorStats();
+};
+
