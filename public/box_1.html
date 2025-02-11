@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Message in a Bottle</title>
+<style>
+/* ... (Your existing CSS styles, including the ocean styles) ... */
+
+#pond {
+    width: 500px;
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+    border-radius: 10px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+    /* Remove background and animation from #pond */
+}
+
+.ocean { /* Use your ocean class for the water effect */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 100%; /* Make it fill the pond */
+    border-top-left-radius: 5px;
+    overflow: hidden;
+    background: linear-gradient(rgb(55, 75, 135), rgb(45, 85, 185), rgb(25, 15, 235));
+}
+
+/* ... (Rest of your CSS styles) ... */
+
+.bottle {
+    /* ... (Your existing bottle styles) ... */
+    z-index: 10; /* Ensure bottles are above the ocean */
+}
+
+</style>
+</head>
+<body>
+
+<div id="input-area">
+  <input type="text" id="message-title" placeholder="Enter title..." maxlength="10"> <br> <br>
+  <input type="text" id="message-input" placeholder="Enter your message...">
+  <button id="throw-button">Throw</button>
+</div>
+
+<div id="pond">
+    <div class="ocean">
+        <div class="ocean-floor">
+            <div class="ocean-floor-contents">
+                </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ... (Your existing JavaScript code) ...
+
+const pond = document.getElementById('pond'); // Get the pond element
+const ocean = document.querySelector('.ocean'); // Get the ocean element
+const oceanFloorContents = document.querySelector(".ocean-floor-contents");
+
+// ... (Rest of your existing JavaScript code)
+
+function createBottle(title, message) {
+    const bottle = document.createElement('div');
+    bottle.classList.add('bottle');
+
+    const x = Math.random() * (pond.offsetWidth - 50);
+    const y = Math.random() * (pond.offsetHeight - 80);
+
+    bottle.style.left = x + 'px';
+    bottle.style.top = y + 'px';
+
+    const titleSpan = document.createElement('span');
+    titleSpan.textContent = title;
+    bottle.appendChild(titleSpan);
+
+    bottle.addEventListener('click', () => {
+        showMessagePopup(title, message);
+    });
+
+    pond.appendChild(bottle); // Append to pond, not ocean
+}
+
+// ... (Rest of your JavaScript, including generateSeaWeed, generateShells, etc.)
+
+</script>
+
+</body>
+</html>
