@@ -221,7 +221,7 @@ let oceanFloorContents = document.querySelector(".ocean-floor-contents");
   });
     const popup = document.createElement('div');
     popup.classList.add('message-popup');
-    popup.innerHTML = `<h2>${title}</h2><p>${message}</p><p>Date: ${formattedDate} ${formattedTime}</p><button class="close-button">Close</button>`; // Include date and time
+    popup.innerHTML = `<h2>${title}</h2><p class = "popupMessage">${message}</p><p class = "date">Date: ${formattedDate} ${formattedTime}</p><button class="close-button">Close</button>`; // Include date and time
     document.body.appendChild(popup);
 
     // Add event listener to the close button:

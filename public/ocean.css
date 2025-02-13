@@ -1125,4 +1125,13 @@
     opacity: 0.3;
   }
 
-  
+ .date{
+  color: blue;
+ } 
+ .popupMessage{
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+ }
