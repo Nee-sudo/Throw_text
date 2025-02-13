@@ -21,14 +21,14 @@ const Message = mongoose.model('Message', messageSchema);
 
 app.use(express.json()); // Enable parsing JSON request bodies
 app.use(express.static('public')); // Serve static files from the 'public' directory
-app.get('/test', (req, res) => {
-    res.sendFile(__dirname + '/public/test.html');
+app.get('/ocean', (req, res) => {
+    res.sendFile(__dirname + '/public/ocean.html');
 });
-app.get('/test.css', (req, res) => {
-    res.sendFile(__dirname + '/public/test.css');
+app.get('/ocean.css', (req, res) => {
+    res.sendFile(__dirname + '/public/ocean.css');
 });
-app.get('/test.js', (req, res) => {
-    res.sendFile(__dirname + '/public/test.js');
+app.get('/ocean.js', (req, res) => {
+    res.sendFile(__dirname + '/public/ocean.js');
 });
 
 
