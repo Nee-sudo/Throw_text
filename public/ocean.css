@@ -1129,9 +1129,17 @@
   color: blue;
  } 
  .popupMessage{
-  margin: 20px 0;
+  
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
  }
+ h1 {
+  text-align: center; /* Center the text */
+  font-size: 2em; /* Adjust size */
+  color:white; /* Set color */
+  margin-bottom: 20px; /* Add some spacing below */
+  background-color: aqua; /* Add background color */
+  /* ... other styles */
+}
