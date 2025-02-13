@@ -1,3 +1,6 @@
+document.addEventListener('DOMContentLoaded', function() {
+
+
 let oceanFloorContents = document.querySelector(".ocean-floor-contents");
       let oceanEl = document.querySelector(".ocean");
       function generateSeaWeed(bottom, left, scale) {
@@ -29,9 +32,12 @@ let oceanFloorContents = document.querySelector(".ocean-floor-contents");
         seaWeedParent.style.transform = `rotate(-90deg)scale(${scale})`;
       }
 
-      generateSeaWeed("1rem", "5%", 0.4);
-      generateSeaWeed(".85rem", "45%", 0.6);
-      generateSeaWeed("1.1rem", "85%", 0.3);
+      // generateSeaWeed("1rem", "5%", 0.4);
+      // generateSeaWeed(".85rem", "45%", 0.6);
+      // generateSeaWeed("1.1rem", "85%", 0.3);
+
+      
+
 
       function generateShells(count) {
         for (let i = 0; i < count; i++) {
@@ -122,7 +128,13 @@ let oceanFloorContents = document.querySelector(".ocean-floor-contents");
 
       generateOctopus();
 
+      generateShells(4);
+      generateFish(6);
+      generateOctopus();
+
+
       const pond = document.getElementById('pond');
+      const test = document.getElementById('test');
       const messageInput = document.getElementById('message-input');
       const messageTitle = document.getElementById('message-title');
       const throwButton = document.getElementById('throw-button');
@@ -152,71 +164,89 @@ let oceanFloorContents = document.querySelector(".ocean-floor-contents");
       });
       
       function sendDataToBackend(title, message, ipAddress) {
-          fetch('/api/messages', { // Replace with your backend endpoint
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({ title, message, ipAddress })
-          })
-          .then(response => response.json())
-          .then(data => {
-              console.log('Data sent to backend:', data);
-              createBottle(title, message); // Create the bottle after successful send
-              fetchAndDisplayMessages();      // Update the display with all messages
-          })
-          .catch(error => {
-              console.error('Error sending data to backend:', error);
-          });
-      }
-      
-      function createBottle(title, message) {
-          const bottle = document.createElement('div');
-          bottle.classList.add('bottle');
-      
-          const x = Math.random() * (pond.offsetWidth - 50);
-          const y = Math.random() * (pond.offsetHeight - 80);
-      
-          bottle.style.left = x + 'px';
-          bottle.style.top = y + 'px';
-      
-          const titleSpan = document.createElement('span');
-          titleSpan.textContent = title;
-          bottle.appendChild(titleSpan);
-      
-          bottle.addEventListener('click', () => {
-              showMessagePopup(title, message);
-          });
-      
-          pond.appendChild(bottle); // Append to pond, not ocean
-      }
-      
-      function showMessagePopup(title, message) { // Add title parameter
-          const popup = document.createElement('div');
-          popup.classList.add('message-popup');
-          popup.innerHTML = `<h2>${title}</h2><p>${message}</p><button onclick="closeMessagePopup()">Close</button>`; // Include title in popup
-          document.body.appendChild(popup);
-      }
-      
-      // ... (closeMessagePopup function remains the same) ...
-      function closeMessagePopup() {
-          const popup = document.querySelector('.message-popup');
-          popup.remove();
-      }   
-
-      function fetchAndDisplayMessages() {
-        fetch('/api/messages') // Get all messages from the backend
-            .then(response => response.json())
-            .then(messages => {
-                pond.innerHTML = ''; // Clear existing bottles
-                messages.forEach(msg => {
-                    createBottle(msg.title, msg.message);
-                });
-            })
-            .catch(error => {
-                console.error("Error fetching messages:", error);
-            });
+        fetch('/api/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, message, ipAddress })
+        })
+        .then(response => {
+            if (!response.ok) { // Check for HTTP errors (4xx or 5xx)
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json(); // If response is okay, then parse JSON
+        })
+        .then(data => {
+            console.log('Data sent to backend:', data);
+            createBottle(title, message);
+            fetchAndDisplayMessages();
+        })
+        .catch(error => {
+            console.error('Error sending data to backend:', error);
+        });
+        window.location.reload(); // Refresh the page
     }
-    
-    // Call this function initially to display any existing messages
-    fetchAndDisplayMessages();
+    function createBottle(title, message) {
+      const bottle = document.createElement('div');
+      bottle.classList.add('bottle');
+  
+      const x = Math.random() * (pond.offsetWidth - 50);
+      const y = Math.random() * (pond.offsetHeight - 80);
+  
+      bottle.style.left = x + 'px';
+      bottle.style.top = y + 'px';
+  
+      const titleSpan = document.createElement('span');
+      titleSpan.textContent = title;
+      bottle.appendChild(titleSpan);
+  
+      bottle.addEventListener('click', () => {
+          showMessagePopup(title, message);
+      });
+  
+      pond.appendChild(bottle);
+  }
+  function showMessagePopup(title, message) {
+    const popup = document.createElement('div');
+    popup.classList.add('message-popup');
+    popup.innerHTML = `<h2>${title}</h2><p>${message}</p><button class="close-button">Close</button>`; // Add a class to the button
+    document.body.appendChild(popup);
+
+    // Add event listener to the close button:
+    const closeButton = popup.querySelector('.close-button'); // Select the button using its class
+    closeButton.addEventListener('click', closeMessagePopup); // Attach the event listener
+
+}
+
+function closeMessagePopup() {
+  const popup = document.querySelector('.message-popup');
+  if (popup) { // Check if the popup exists before trying to remove it
+      popup.remove();
+  }
+}
+
+function fetchAndDisplayMessages() {
+    fetch('/api/messages')
+        .then(response => {
+           if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(messages => {
+            test.innerHTML = '';
+            messages.forEach(msg => {
+                createBottle(msg.title, msg.message);
+            });
+        })
+        .catch(error => {
+            console.error("Error fetching messages:", error);
+        });
+}
+
+setTimeout(() => {
+  fetchAndDisplayMessages();
+}, 100);
+
+});

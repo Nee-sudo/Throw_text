@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
-const port = 4000; // Choose your port
+const port = 5000; // Choose your port
 
 // MongoDB connection
 mongoose.connect('mongodb+srv://neer:bjFBXFCYd00Gifiv@pdf-uploading-site.ges8oic.mongodb.net/?retryWrites=true&w=majority', { // Replace with your MongoDB URI
@@ -20,10 +20,17 @@ const messageSchema = new mongoose.Schema({
 const Message = mongoose.model('Message', messageSchema);
 
 app.use(express.json()); // Enable parsing JSON request bodies
-// app.use(express.static('public')); // Serve static files from the 'public' directory
+app.use(express.static('public')); // Serve static files from the 'public' directory
 app.get('/test', (req, res) => {
     res.sendFile(__dirname + '/public/test.html');
 });
+app.get('/test.css', (req, res) => {
+    res.sendFile(__dirname + '/public/test.css');
+});
+app.get('/test.js', (req, res) => {
+    res.sendFile(__dirname + '/public/test.js');
+});
+
 
 // API endpoint to save messages
 app.post('/api/messages', (req, res) => {

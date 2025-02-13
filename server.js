@@ -7,7 +7,7 @@ const app = express();
 const PORT = 3000;
 const requestIp = require('request-ip');
 
-const URI = process.env.MONGO_URI || ''; // MongoDB URI  
+const URI = process.env.MONGO_URI || 'mongodb+srv://neer:bjFBXFCYd00Gifiv@pdf-uploading-site.ges8oic.mongodb.net/?retryWrites=true&w=majority'; // MongoDB URI  
 // Connect to MongoDB (replace 'your_database_url' with your actual MongoDB URL)
 mongoose.connect(URI, {
   useNewUrlParser: true,
