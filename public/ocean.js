@@ -187,7 +187,7 @@ let oceanFloorContents = document.querySelector(".ocean-floor-contents");
         });
         window.location.reload(); // Refresh the page
     }
-    function createBottle(title, message) {
+    function createBottle(title, message ,createdAt) {
       const bottle = document.createElement('div');
       bottle.classList.add('bottle');
   
@@ -202,15 +202,26 @@ let oceanFloorContents = document.querySelector(".ocean-floor-contents");
       bottle.appendChild(titleSpan);
   
       bottle.addEventListener('click', () => {
-          showMessagePopup(title, message);
+          showMessagePopup(title, message ,createdAt);
       });
   
       pond.appendChild(bottle);
   }
-  function showMessagePopup(title, message) {
+  function showMessagePopup(title, message ,createdAt) {
+    const formattedDate = new Date(createdAt).toLocaleDateString('en-US', { // Format date
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+  });
+
+  const formattedTime = new Date(createdAt).toLocaleTimeString('en-US', { // Format time
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric'
+  });
     const popup = document.createElement('div');
     popup.classList.add('message-popup');
-    popup.innerHTML = `<h2>${title}</h2><p>${message}</p><button class="close-button">Close</button>`; // Add a class to the button
+    popup.innerHTML = `<h2>${title}</h2><p>${message}</p><p>Date: ${formattedDate} ${formattedTime}</p><button class="close-button">Close</button>`; // Include date and time
     document.body.appendChild(popup);
 
     // Add event listener to the close button:
@@ -237,7 +248,7 @@ function fetchAndDisplayMessages() {
         .then(messages => {
             test.innerHTML = '';
             messages.forEach(msg => {
-                createBottle(msg.title, msg.message);
+                createBottle(msg.title, msg.message , msg.createdAt);
             });
         })
         .catch(error => {
