@@ -1,4 +1,12 @@
-* {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box</title>
+    <link rel="stylesheet" href="box.css">
+    <style>
+      * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -849,39 +857,13 @@
   margin-right: 10px; /* Space between inputs and button */
   flex: 1; /* Allow inputs to grow */
 }
-/* #throw-button {
+#throw-button {
   padding: 8px 16px;
   background-color: #4caf50;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-} */
-
-
-/* CSS */
-#throw-button {
-  background-color: #c2fbd7;
-  border-radius: 100px;
-  box-shadow: rgba(44, 187, 99, .2) 0 -25px 18px -14px inset,rgba(44, 187, 99, .15) 0 1px 2px,rgba(44, 187, 99, .15) 0 2px 4px,rgba(44, 187, 99, .15) 0 4px 8px,rgba(44, 187, 99, .15) 0 8px 16px,rgba(44, 187, 99, .15) 0 16px 32px;
-  color: green;
-  cursor: pointer;
-  display: inline-block;
-  font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
-  padding: 7px 20px;
-  text-align: center;
-  text-decoration: none;
-  transition: all 250ms;
-  border: 0;
-  font-size: 16px;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-}
-
-#throw-button:hover {
-  box-shadow: rgba(44,187,99,.35) 0 -25px 18px -14px inset,rgba(44,187,99,.25) 0 1px 2px,rgba(44,187,99,.25) 0 2px 4px,rgba(44,187,99,.25) 0 4px 8px,rgba(44,187,99,.25) 0 8px 16px,rgba(44,187,99,.25) 0 16px 32px;
-  transform: scale(1.05) rotate(-1deg);
 }
 #pond {
   width: 100%; /* Use 100% not 100vw to stay within app's bounds */
@@ -892,31 +874,31 @@
   overflow: hidden; /* Important: Keep overflow hidden */
 }
 
-.bottle {
-  position: absolute;
-  width: 50px; /* Adjust bottle size */
-  height: 80px; /* Adjust bottle size */
-  background: url("bottle_1_no_bg.png"); /* Replace with your bottle image */
-  background-size: contain;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white; /* Text color inside bottle */
-  font-size: 12px; /* Adjust font size */
-  transform-origin: center bottom; /* For proper rotation */
-  animation: float 4s linear infinite, wave 2s linear infinite; /* Add float and wave animation */
-  z-index: 10; /* Ensure bottles are above the ocean */
-}
+    .bottle {
+        position: absolute;
+        width: 50px; /* Adjust bottle size */
+        height: 80px; /* Adjust bottle size */
+        background: url("bottle.png"); /* Replace with your bottle image */
+        background-size: contain;
+        background-repeat: no-repeat;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white; /* Text color inside bottle */
+        font-size: 12px; /* Adjust font size */
+        transform-origin: center bottom; /* For proper rotation */
+        animation: float 4s linear infinite, wave 2s linear infinite; /* Add float and wave animation */
+        z-index: 10; /* Ensure bottles are above the ocean */
+    }
     
-.bottle span {
-max-width: 100%; /* Occupy full width of the bottle */
-overflow: hidden; /* Hide overflowing text */
-text-overflow: ellipsis; /* Add ellipsis (...) for overflow */
-white-space: nowrap; /* Prevent text from wrapping */
-text-align: center;
-}
+    .bottle span {
+  max-width: 100%; /* Occupy full width of the bottle */
+  overflow: hidden; /* Hide overflowing text */
+  text-overflow: ellipsis; /* Add ellipsis (...) for overflow */
+  white-space: nowrap; /* Prevent text from wrapping */
+  text-align: center;
+    }
     
     @keyframes float {
         0% { transform: translateY(0); }
@@ -944,14 +926,12 @@ text-align: center;
     
     .message-popup h2 {
       margin-top: 0;
-    text-align: center;
     }
     
     .message-popup button {
-      float: right;
       margin-top: 10px;
       padding: 8px 16px;
-      background-color:red;
+      background-color: #4caf50;
       color: white;
       border: none;
       border-radius: 4px;
@@ -992,154 +972,295 @@ text-align: center;
       }
       /* Further adjustments for smaller screens */
   }
+    </style>
+</head>
+<body>
+    <div id="input-area">
+  <input type="text" id="message-title" placeholder="Enter title..." maxlength="10"> <br> <br>
+  <input type="text" id="message-input" placeholder="Enter your message...">
+  <button id="throw-button">Throw</button>
+</div>
+    <div class="app">
+        <div class="scene-container">
+          <div class="sky" style="display: none;"></div>
+          <div id="pond">
+            <div class="ocean">
+                <div class="ocean-floor">
+                    <div class="ocean-floor-contents">
+                        </div>
+                <!-- DIVER -->
+                <div class="diver">
+                  <div class="happy-birthday">
+                    <h5>Grab a Bottle</h5>
+                  </div>
+                  <div class="diver-head">
+                    <div class="diver-mask">
+                      <div class="eyes">
+                        <div class="eye eye-1"></div>
+                        <div class="eye eye-2"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="diver-body">
+                    <div class="tank"></div>
+                    <div class="diver-arm"></div>
+                  </div>
+                  <div class="diver-legs">
+                    <div class="diver-leg diver-leg-1">
+                      <div class="leg"></div>
+                      <div class="fin fin-1"></div>
+                    </div>
+                    <div class="diver-leg diver-leg-2">
+                      <div class="leg"></div>
+                      <div class="fin fin-2"></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- DIVER ENDS-->
+                <div class="ocean-floor">
+                  <div class="ocean-floor-contents">
+                    <div class="crab">
+                      <div class="crab-claw crab-claw-left"></div>
+                      <div class="crab-body">
+                        <div class="crab-head"></div>
+                        <div class="crab-legs">
+                          <div class="crab-leg"></div>
+                          <div class="crab-leg"></div>
+                        </div>
+                      </div>
+                      <div class="crab-claw crab-claw-right"></div>
+                    </div>
+                  </div>
+                  <!-- SEAWEED-->
+                </div>
+              </div>
+          </div>
+        </div>
+      </div>
+      <script src="test.js"></script>
+      <script>
+        let oceanFloorContents = document.querySelector(".ocean-floor-contents");
+      let oceanEl = document.querySelector(".ocean");
+      function generateSeaWeed(bottom, left, scale) {
+        let oceanFloor = document.querySelector(".ocean-floor");
 
-  .bubble {
-    width: 30px;
-    height: 30px;
-    border-radius: 100%;
-    position: absolute;
-    background-color: white;
-    bottom: -30px;
-    opacity: 0.2;
-    animation: bubble 15s ease-in-out infinite,
-      sideWays 4s ease-in-out infinite alternate;
-  }
-  
-  @keyframes bubble {
-    0% {
-      transform: translateY(0%);
-      opacity: 0.06;
-    }
-    100% {
-      transform: translateY(-120vh);
-    }
-  }
-  
-  @keyframes sideWays {
-    0% {
-      margin-left: 0px;
-    }
-    100% {
-      margin-left: 200px;
-    }
-  }
-  
-  .bubble--1 {
-    left: 10%;
-    animation-delay: 0.5s;
-    animation-duration: 16s;
-    opacity: 0.2;
-  }
-  
-  .bubble--2 {
-    width: 15px;
-    height: 15px;
-    left: 40%;
-    animation-delay: 1s;
-    animation-duration: 10s;
-    opacity: 0.1;
-  }
-  
-  .bubble--3 {
-    width: 10px;
-    height: 10px;
-    left: 30%;
-    animation-delay: 5s;
-    animation-duration: 20s;
-    opacity: 0.3;
-  }
-  
-  .bubble--4 {
-    width: 25px;
-    height: 25px;
-    left: 40%;
-    animation-delay: 8s;
-    animation-duration: 17s;
-    opacity: 0.2;
-  }
-  
-  .bubble--5 {
-    width: 30px;
-    height: 30px;
-    left: 60%;
-    animation-delay: 10s;
-    animation-duration: 15s;
-    opacity: 0.1;
-  }
-  
-  .bubble--6 {
-    width: 10px;
-    height: 10px;
-    left: 80%;
-    animation-delay: 3s;
-    animation-duration: 30s;
-    opacity: 0.4;
-  }
-  
-  .bubble--7 {
-    width: 15px;
-    height: 15px;
-    left: 90%;
-    animation-delay: -7s;
-    animation-duration: 25s;
-    opacity: 0.3;
-  }
-  
-  .bubble--9 {
-    width: 20px;
-    height: 20px;
-    left: 50%;
-    bottom: 30px;
-    animation-delay: -5s;
-    animation-duration: 19s;
-    opacity: 0.2;
-  }
-  
-  .bubble--10 {
-    width: 40px;
-    height: 40px;
-    left: 30%;
-    bottom: 30px;
-    animation-delay: -21s;
-    animation-duration: 16s;
-    opacity: 0.3;
-  }
-  
-  .bubble--11 {
-    width: 30px;
-    height: 30px;
-    left: 60%;
-    bottom: 30px;
-    animation-delay: -13.75s;
-    animation-duration: 20s;
-    opacity: 0.3;
-  }
-  
-  .bubble--11 {
-    width: 25px;
-    height: 25px;
-    left: 90%;
-    bottom: 30px;
-    animation-delay: -10.5s;
-    animation-duration: 19s;
-    opacity: 0.3;
-  }
+        let seaWeedParent = document.createElement("div");
+        seaWeedParent.className = "seaweed-parent";
+        for (let i = 0; i < 3; i++) {
+          let seaweedSection = document.createElement("div");
+          seaweedSection.className = `seaweed-section seaweed-section-${i + 1}`;
+          let lastNode;
+          for (let j = 0; j < 10; j++) {
+            let seaweed = document.createElement("div");
+            seaweed.className = `seaweed seaweed-animation-${i + 1}`;
 
- .date{
-  color: blue;
- } 
- .popupMessage{
-  margin: 20%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
- }
- h1 {
-  text-align: center; /* Center the text */
-  font-size: 2em; /* Adjust size */
-  color:white; /* Set color */
-  margin-bottom: 20px; /* Add some spacing below */
-  background-color: aqua; /* Add background color */
-  /* ... other styles */
-}
+            if (!lastNode) {
+              console.log("no children!");
+              seaweedSection.appendChild(seaweed);
+            } else {
+              lastNode.appendChild(seaweed);
+            }
+            lastNode = seaweed;
+          }
+          seaWeedParent.appendChild(seaweedSection);
+        }
+        oceanFloorContents.appendChild(seaWeedParent);
+        seaWeedParent.style.left = left;
+        seaWeedParent.style.bottom = bottom;
+        seaWeedParent.style.transform = `rotate(-90deg)scale(${scale})`;
+      }
+
+      generateSeaWeed("1rem", "5%", 0.4);
+      generateSeaWeed(".85rem", "45%", 0.6);
+      generateSeaWeed("1.1rem", "85%", 0.3);
+
+      function generateShells(count) {
+        for (let i = 0; i < count; i++) {
+          let shell = document.createElement("div");
+          shell.className = "shell";
+          let left = Math.random() * 100;
+          let bottom = Math.random() * 1;
+          left = left > 15 ? left : 15;
+          shell.style.left = `${left}%`;
+          // shell.style.width = width;
+          // shell.style.height = height;
+          shell.style.bottom = `${bottom}rem`;
+          oceanFloorContents.appendChild(shell);
+        }
+      }
+
+      generateShells(4);
+
+      function generateFish(count) {
+        for (let i = 0; i < count; i++) {
+          let color = `rgb(${(Math.random() * 255) | 0},${
+            (Math.random() * 255) | 0
+          },${(Math.random() * 255) | 0})`;
+          let fishEl = document.createElement("div");
+          let bottom = (Math.random() * 100) | 0;
+          bottom = bottom > 15 ? bottom : 15;
+          fishEl.className = "fish-body";
+          fishEl.style.bottom = `${bottom}%`;
+          fishEl.style.setProperty("--color", color);
+          let time = (Math.random() * 15) | (0 + 12);
+          let delay = (Math.random() * 8) | 0;
+          let animationStyle =
+            Math.random() > 0.5 ? "cubic-bezier(.2,.4,.8,1.2)" : "linear";
+
+          if (Math.random() > 0.5) {
+            fishEl.classList.add("fish-swim-left");
+
+            fishEl.style.animation = `fishswimleft ${time}s ${delay}s ${animationStyle} infinite`;
+          } else {
+            fishEl.classList.add("fish-swim-right");
+            let style =
+              Math.random() > 0.5 ? "cubic-bezier(.2,.4,.8,1.2)" : "linear";
+            fishEl.style.animation = `fishswimright ${time}s ${delay}s ${animationStyle} infinite`;
+          }
+          oceanEl.appendChild(fishEl);
+        }
+      }
+
+      generateFish(6);
+
+
+
+      function generateOctopus() {
+        let animations = [
+          "octopus-animation-1",
+          "octopus-animation-2",
+          "octopus-animation-3",
+          // "octopus-animation-4",
+        ];
+        let octopus = document.createElement("div");
+        let octopusHead = document.createElement("div");
+        let octopusBody = document.createElement("div");
+        octopus.className = "octopus";
+        octopusHead.className = "octopus-head";
+        octopusBody.className = "octopus-body";
+        octopus.appendChild(octopusHead);
+        octopus.appendChild(octopusBody);
+
+        oceanEl.appendChild(octopus);
+        for (let i = 0; i < 8; i++) {
+          let octopusArm = document.createElement("div");
+          octopusArm.className = "octopus-arm";
+          octopusBody.appendChild(octopusArm);
+          let animation = animations[(Math.random() * animations.length) | 0];
+          let lastNode;
+          for (let j = 0; j < 10; j++) {
+            let armBit = document.createElement("div");
+            armBit.className = `octopus-tentacle-segment ${animation}`;
+            if (!lastNode) {
+              octopusArm.appendChild(armBit);
+            } else {
+              lastNode.appendChild(armBit);
+            }
+            lastNode = armBit;
+          }
+        }
+      }
+
+      generateOctopus();
+
+      const pond = document.getElementById('pond');
+      const messageInput = document.getElementById('message-input');
+      const messageTitle = document.getElementById('message-title');
+      const throwButton = document.getElementById('throw-button');
+      
+      throwButton.addEventListener('click', () => {
+          const title = messageTitle.value.trim();
+          const message = messageInput.value.trim();
+      
+          if (title !== "" && message !== "") {
+              // Get IP address (using a free service for demonstration)
+              fetch('https://api.ipify.org?format=json') // or a better IP geolocation service
+                  .then(response => response.json())
+                  .then(data => {
+                      const ipAddress = data.ip;
+                      sendDataToBackend(title, message, ipAddress);
+                  })
+                  .catch(error => {
+                      console.error("Error getting IP address:", error);
+                      // Handle the error appropriately, perhaps use a default IP or don't send IP
+                      sendDataToBackend(title, message, "IP address not found"); // Example: send "not found"
+                  });
+      
+      
+              messageInput.value = "";
+              messageTitle.value = "";
+          }
+      });
+      
+      function sendDataToBackend(title, message, ipAddress) {
+          fetch('/api/messages', { // Replace with your backend endpoint
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ title, message, ipAddress })
+          })
+          .then(response => response.json())
+          .then(data => {
+              console.log('Data sent to backend:', data);
+              createBottle(title, message); // Create the bottle after successful send
+              fetchAndDisplayMessages();      // Update the display with all messages
+          })
+          .catch(error => {
+              console.error('Error sending data to backend:', error);
+          });
+      }
+      
+      function createBottle(title, message) {
+          const bottle = document.createElement('div');
+          bottle.classList.add('bottle');
+      
+          const x = Math.random() * (pond.offsetWidth - 50);
+          const y = Math.random() * (pond.offsetHeight - 80);
+      
+          bottle.style.left = x + 'px';
+          bottle.style.top = y + 'px';
+      
+          const titleSpan = document.createElement('span');
+          titleSpan.textContent = title;
+          bottle.appendChild(titleSpan);
+      
+          bottle.addEventListener('click', () => {
+              showMessagePopup(title, message);
+          });
+      
+          pond.appendChild(bottle); // Append to pond, not ocean
+      }
+      
+      function showMessagePopup(title, message) { // Add title parameter
+          const popup = document.createElement('div');
+          popup.classList.add('message-popup');
+          popup.innerHTML = `<h2>${title}</h2><p>${message}</p><button onclick="closeMessagePopup()">Close</button>`; // Include title in popup
+          document.body.appendChild(popup);
+      }
+      
+      // ... (closeMessagePopup function remains the same) ...
+      function closeMessagePopup() {
+          const popup = document.querySelector('.message-popup');
+          popup.remove();
+      }   
+
+      function fetchAndDisplayMessages() {
+        fetch('/api/messages') // Get all messages from the backend
+            .then(response => response.json())
+            .then(messages => {
+                pond.innerHTML = ''; // Clear existing bottles
+                messages.forEach(msg => {
+                    createBottle(msg.title, msg.message);
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching messages:", error);
+            });
+    }
+    
+    // Call this function initially to display any existing messages
+    fetchAndDisplayMessages();
+      </script>
+</body>
+</html>

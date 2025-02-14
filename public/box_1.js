@@ -77,3 +77,16 @@ function fetchAndDisplayMessages() {
 
 // Call this function initially to display any existing messages
 fetchAndDisplayMessages();
+
+function createBottle(title, message) {
+    const bottleContainer = document.createElement('div');
+    bottleContainer.classList.add('bottle-container');
+
+    const bottle = document.createElement('div');
+    bottle.classList.add('bottle');
+
+    // ... (rest of your bottle creation code)
+
+    bottleContainer.appendChild(bottle); // Append bottle to container
+    pond.appendChild(bottleContainer); // Append container to pond
+}

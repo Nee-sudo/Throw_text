@@ -12,7 +12,9 @@ const URI = process.env.MONGO_URI || 'mongodb+srv://neer:bjFBXFCYd00Gifiv@pdf-up
 mongoose.connect(URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
-});
+}).then(() => { 
+  console.log('Connected to MongoDB');
+}).catch(err => console.error('MongoDB connection error:', err));
 
 // Define a schema for your data
 const textSchema = new mongoose.Schema({
@@ -22,6 +24,18 @@ const textSchema = new mongoose.Schema({
 // Create a model based on the schema
 const Text = mongoose.model('Text', textSchema);
 
+// Define message schema
+const messageSchema = new mongoose.Schema({
+  title: String,
+  message: String,
+  ipAddress: String,
+  country: String,
+  region: String,
+  city: String,
+  createdAt: { type: Date, default: Date.now },
+});
+
+const Message = mongoose.model("Message", messageSchema);
 app.use(bodyParser.json());
 app.use(requestIp.mw()); // Middleware to get IP address
 // Serve the HTML file
@@ -145,6 +159,37 @@ app.get('/sitemap.xml', (req, res) => {
   res.sendFile(filePath);
 });
 
+// to get the ocean.html file
+app.get('/ocean', (req, res) => {
+  const filePath = path.join(__dirname, 'public/ocean.html'); 
+  res.sendFile(filePath);
+});
+// API endpoint to save messages
+app.post("/api/messages", (req, res) => {
+  const { title, message, ipAddress } = req.body;
+  const newMessage = new Message({
+    title,
+    message,
+    ipAddress,
+    country: req.body.country,
+    region: req.body.region,
+    city: req.body.city,
+  });
+
+  newMessage
+    .save()
+    .then((savedMessage) => res.json(savedMessage))
+    .catch((err) => res.status(500).json({ error: "Failed to save message" }));
+});
+
+// API endpoint to get all messages
+app.get("/api/messages", (req, res) => {
+  Message.find()
+    .then((messages) => res.json(messages))
+    .catch((err) =>
+      res.status(500).json({ error: "Failed to fetch messages" })
+    );
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

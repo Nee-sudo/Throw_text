@@ -140,8 +140,8 @@
       });
       
       function createBottle(title, message) {
-          const bottle = document.createElement('div');
-          bottle.classList.add('bottle');
+        const bottle = document.createElement('div');
+        bottle.classList.add('bottle');
       
           const x = Math.random() * (pond.offsetWidth - 50);
           const y = Math.random() * (pond.offsetHeight - 80);
@@ -172,3 +172,20 @@
           const popup = document.querySelector('.message-popup');
           popup.remove();
       }   
+
+      function checkLocalStorage() {
+        const total = Object.keys(localStorage).reduce((sum, key) => {
+            return sum + localStorage.getItem(key).length;
+        }, 0);
+    
+        console.log(`Total localStorage size: ${total} bytes`);
+    
+        // Check if the size exceeds a certain limit (e.g., 5MB)
+        if (total > 5 * 1024 * 1024) { // 5MB
+            console.warn('localStorage size exceeds 5MB. Clearing storage...');
+            localStorage.clear(); // Clear localStorage
+        }
+    }
+    
+    // Call the function to check localStorage size
+    checkLocalStorage();

@@ -21,7 +21,10 @@ const messageSchema = new mongoose.Schema({
   title: String,
   message: String,
   ipAddress: String,
-  createdAt: { type: Date, default: Date.now }
+  country: String,
+  region: String,
+  city: String,
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Message = mongoose.model("Message", messageSchema);
@@ -41,7 +44,14 @@ app.get("/ocean.js", (req, res) => {
 // API endpoint to save messages
 app.post("/api/messages", (req, res) => {
   const { title, message, ipAddress } = req.body;
-  const newMessage = new Message({ title, message, ipAddress });
+  const newMessage = new Message({
+    title,
+    message,
+    ipAddress,
+    country: req.body.country,
+    region: req.body.region,
+    city: req.body.city,
+  });
 
   newMessage
     .save()

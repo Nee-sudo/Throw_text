@@ -164,28 +164,44 @@ let oceanFloorContents = document.querySelector(".ocean-floor-contents");
       });
       
       function sendDataToBackend(title, message, ipAddress) {
-        fetch('/api/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ title, message, ipAddress })
-        })
-        .then(response => {
-            if (!response.ok) { // Check for HTTP errors (4xx or 5xx)
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json(); // If response is okay, then parse JSON
-        })
-        .then(data => {
-            console.log('Data sent to backend:', data);
-            createBottle(title, message);
-            fetchAndDisplayMessages();
-        })
-        .catch(error => {
-            console.error('Error sending data to backend:', error);
-        });
-        window.location.reload(); // Refresh the page
+        const apiKey = '032783179f989d'; // Replace with your actual ipinfo.io API key
+        const apiUrl = `https://ipinfo.io/${ipAddress}?token=${apiKey}`; // ipinfo.io API URL
+    
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(err => {throw new Error(`ipinfo.io API error! status: ${response.status}, message: ${err}`)}); // Include error message
+                }
+                return response.json();
+            })
+            .then(ipinfoData => {
+                const country = ipinfoData.country;
+                const region = ipinfoData.region;
+                const city = ipinfoData.city;
+    
+                return fetch('/api/messages', { // Return the fetch promise
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, message, ipAddress, country, region, city })
+                }); // End of the fetch to /api/messages
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(err => {throw new Error(`HTTP error! status: ${response.status}, message: ${err}`)});
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Data sent to backend:', data);
+                createBottle(title, message, data.createdAt); // Pass createdAt
+                fetchAndDisplayMessages();
+            })
+            .catch(error => {
+                console.error('Error sending data to backend:', error);
+                alert("There was an error sending your message. Please try again later."); // Or any other user feedback
+            });
     }
     function createBottle(title, message ,createdAt) {
       const bottle = document.createElement('div');
