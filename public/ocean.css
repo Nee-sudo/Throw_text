@@ -917,7 +917,14 @@ text-overflow: ellipsis; /* Add ellipsis (...) for overflow */
 white-space: nowrap; /* Prevent text from wrapping */
 text-align: center;
 }
+
+.bottle:focus { /* CORRECTED: Target the span on focus */
+  outline: none !important;
+  box-shadow: none !important;
+}
     
+
+
     @keyframes float {
         0% { transform: translateY(0); }
         50% { transform: translateY(-10px); } /* Adjust float height */
@@ -981,6 +988,7 @@ text-align: center;
       .crab {
           transform: scale(0.5);
       }
+      
   }
   
   @media (max-width: 480px) { /* Example: Adjust for phones */

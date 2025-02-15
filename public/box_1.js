@@ -90,3 +90,43 @@ function createBottle(title, message) {
     bottleContainer.appendChild(bottle); // Append bottle to container
     pond.appendChild(bottleContainer); // Append container to pond
 }
+
+function sendDataToBackend(title, message, ipAddress) {
+    const apiKey = 'YOUR_IPINFO_API_KEY'; // Replace with your actual ipinfo.io API key
+    const apiUrl = `https://ipinfo.io/${ipAddress}?token=${apiKey}`; // ipinfo.io API URL
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`ipinfo.io API error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(ipinfoData => {
+            const country = ipinfoData.country; // Get the country code (e.g., "US", "IN")
+            const region = ipinfoData.region; // You can also get the region
+            const city = ipinfoData.city;
+
+            fetch('/api/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, message, ipAddress, country, region, city }) // Include country, region and city
+            })
+            .then(response => { // ... (rest of your fetch code) })
+            .catch(error => { // ... (error handling) });
+        })
+        .catch(error => {
+            console.error('Error getting IP info:', error);
+            const country = "Unknown"; // Handle error, default unknown
+            const region = "Unknown"; // Handle error, default unknown
+            const city = "Unknown";
+            fetch('/api/messages', { // Still send the message even if geolocation fails
+                // ... (headers)
+                body: JSON.stringify({ title, message, ipAddress, country, region, city }) // Include country even on error
+
+            })
+             // ... (rest of the then and catch part of fetch)
+        });
+});

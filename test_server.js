@@ -1,14 +1,13 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const port = 5000; // Choose your port
+const port = 5000;
 
 // MongoDB connection
 mongoose
   .connect(
     "mongodb+srv://neer:bjFBXFCYd00Gifiv@pdf-uploading-site.ges8oic.mongodb.net/?retryWrites=true&w=majority",
     {
-      // Replace with your MongoDB URI
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }
@@ -27,16 +26,19 @@ const messageSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-const Message = mongoose.model("Message", messageSchema);
+const Message = mongoose.model("Usermessage", messageSchema); // Model name is "Usermessage"
 
-app.use(express.json()); // Enable parsing JSON request bodies
-app.use(express.static("public")); // Serve static files from the 'public' directory
+app.use(express.json());
+app.use(express.static("public"));
+
 app.get("/ocean", (req, res) => {
   res.sendFile(__dirname + "/public/ocean.html");
 });
+
 app.get("/ocean.css", (req, res) => {
   res.sendFile(__dirname + "/public/ocean.css");
 });
+
 app.get("/ocean.js", (req, res) => {
   res.sendFile(__dirname + "/public/ocean.js");
 });
@@ -44,7 +46,7 @@ app.get("/ocean.js", (req, res) => {
 // API endpoint to save messages
 app.post("/api/messages", (req, res) => {
   const { title, message, ipAddress } = req.body;
-  const newMessage = new Message({
+  const newMessage = new Message({ // Use the correct model name: Message
     title,
     message,
     ipAddress,
@@ -61,7 +63,7 @@ app.post("/api/messages", (req, res) => {
 
 // API endpoint to get all messages
 app.get("/api/messages", (req, res) => {
-  Message.find()
+  Message.find() // Use the correct model name: Message
     .then((messages) => res.json(messages))
     .catch((err) =>
       res.status(500).json({ error: "Failed to fetch messages" })
