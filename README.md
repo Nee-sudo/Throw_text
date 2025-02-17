@@ -17,8 +17,8 @@
 ## 🛠️ Tech Stack  
 - **Frontend:** HTML, CSS, JavaScript.  
 - **Backend:** Node.js with Express.js.  
-- **Database:** Redis (for temporary text storage).  
-- **Hosting:** Vercel or Render for deployment.  
+- **Database:** Mongo db (for temporary text storage).  
+- **Hosting:** Railway or Render for deployment.  
 
 ## 🚀 Future Plans  
 - Add **QR Code Sharing** for easier text transfer.  
