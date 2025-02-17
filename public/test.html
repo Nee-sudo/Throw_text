@@ -1261,6 +1261,39 @@
     
     // Call this function initially to display any existing messages
     fetchAndDisplayMessages();
+
+    // 17-02-2-25
+
+    function createBottle(title, message, createdAt, countryCode) { // Add countryCode parameter
+    const bottle = document.createElement('div');
+    bottle.classList.add('bottle');
+
+    const x = Math.random() * (pond.offsetWidth - 50);
+    const y = Math.random() * (pond.offsetHeight - 80);
+
+    bottle.style.left = x + 'px';
+    bottle.style.top = y + 'px';
+
+    const titleSpan = document.createElement('span');
+    titleSpan.textContent = title;
+    bottle.appendChild(titleSpan);
+
+    // Add flag image
+    if (countryCode) {
+        const flagImg = document.createElement('img');
+        flagImg.src = `https://flagcdn.com/20x15/${countryCode.toLowerCase()}.png`; // Use flagcdn api.
+        flagImg.alt = `Flag of ${countryCode}`;
+        flagImg.classList.add('flag'); // Add a class for styling
+        bottle.appendChild(flagImg);
+    }
+
+    bottle.addEventListener('click', () => {
+        showMessagePopup(title, message, createdAt);
+    });
+
+    pond.appendChild(bottle);
+}
+
       </script>
 </body>
 </html>

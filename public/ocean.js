@@ -149,7 +149,8 @@ let oceanFloorContents = document.querySelector(".ocean-floor-contents");
                   .then(response => response.json())
                   .then(data => {
                       const ipAddress = data.ip;
-                      sendDataToBackend(title, message, ipAddress);
+                      sendDataToBackend(title, message, ipAddress , country);
+                      fetchAndDisplayMessages();
                   })
                   .catch(error => {
                       console.error("Error getting IP address:", error);
@@ -203,26 +204,72 @@ let oceanFloorContents = document.querySelector(".ocean-floor-contents");
                 alert("There was an error sending your message. Please try again later."); // Or any other user feedback
             });
     }
-    function createBottle(title, message ,createdAt) {
-      const bottle = document.createElement('div');
-      bottle.classList.add('bottle');
-  
-      const x = Math.random() * (pond.offsetWidth - 50);
-      const y = Math.random() * (pond.offsetHeight - 80);
-  
-      bottle.style.left = x + 'px';
-      bottle.style.top = y + 'px';
-  
-      const titleSpan = document.createElement('span');
-      titleSpan.textContent = title;
-      bottle.appendChild(titleSpan);
-  
-      bottle.addEventListener('click', () => {
-          showMessagePopup(title, message ,createdAt);
-      });
-  
-      pond.appendChild(bottle);
+
+    // Store bottle positions
+let bottlePositions = [];
+
+function checkOverlap(newBottle, existingBottle) {
+    return !(
+        newBottle.x + newBottle.width < existingBottle.x ||
+        newBottle.x > existingBottle.x + existingBottle.width ||
+        newBottle.y + newBottle.height < existingBottle.y ||
+        newBottle.y > existingBottle.y + existingBottle.height
+    );
+}
+
+
+
+
+
+function createBottle(title, message, createdAt, countryCode) {
+  const bottle = document.createElement('div');
+  bottle.classList.add('bottle');
+
+  const bottleWidth = 50; // Adjust as needed
+  const bottleHeight = 80; // Adjust as needed
+
+  let x, y, overlap;
+
+  do {
+      x = Math.random() * (pond.offsetWidth - bottleWidth);
+      y = Math.random() * (pond.offsetHeight - bottleHeight);
+
+      overlap = false;
+      const newBottle = { x, y, width: bottleWidth, height: bottleHeight };
+
+      for (const existingBottle of bottlePositions) {
+          if (checkOverlap(newBottle, existingBottle)) {
+              overlap = true;
+              break;
+          }
+      }
+  } while (overlap);
+
+  bottle.style.left = x + 'px';
+  bottle.style.top = y + 'px';
+
+  const titleSpan = document.createElement('span');
+  titleSpan.textContent = title;
+  bottle.appendChild(titleSpan);
+
+  if (countryCode) {
+      const flagImg = document.createElement('img');
+      flagImg.src = `https://flagcdn.com/20x15/${countryCode.toLowerCase()}.png`;
+      flagImg.alt = `Flag of ${countryCode}`;
+      flagImg.classList.add('flag');
+      bottle.appendChild(flagImg);
   }
+
+  bottle.addEventListener('click', () => {
+      showMessagePopup(title, message, createdAt);
+  });
+
+  pond.appendChild(bottle);
+
+  // Store the bottle's position
+  bottlePositions.push({ x, y, width: bottleWidth, height: bottleHeight });
+}
+
   function showMessagePopup(title, message ,createdAt) {
     const formattedDate = new Date(createdAt).toLocaleDateString('en-US', { // Format date
       year: 'numeric',
@@ -254,22 +301,23 @@ function closeMessagePopup() {
 }
 
 function fetchAndDisplayMessages() {
-    fetch('/api/messages')
-        .then(response => {
-           if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(messages => {
-            test.innerHTML = '';
-            messages.forEach(msg => {
-                createBottle(msg.title, msg.message , msg.createdAt);
-            });
-        })
-        .catch(error => {
-            console.error("Error fetching messages:", error);
-        });
+  fetch('/api/messages')
+      .then(response => {
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+      })
+      .then(messages => {
+          test.innerHTML = '';
+          bottlePositions = []; // Clear existing positions
+          messages.forEach(msg => {
+              createBottle(msg.title, msg.message, msg.createdAt, msg.country);
+          });
+      })
+      .catch(error => {
+          console.error("Error fetching messages:", error);
+      });
 }
 
 setTimeout(() => {
