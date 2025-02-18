@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
                         const ipAddress = data.ip;
   
-                        sendDataToBackend(title, message, ipAddress , country);
+                        sendDataToBackend(title, message, ipAddress);
   
                         fetchAndDisplayMessages();
   
@@ -330,86 +330,72 @@ document.addEventListener('DOMContentLoaded', function() {
   
        
   
-        function sendDataToBackend(title, message, ipAddress) {
-  
-          const apiKey = '032783179f989d'; // Replace with your actual ipinfo.io API key
-  
-          const apiUrl = `https://ipinfo.io/${ipAddress}?token=${apiKey}`; // ipinfo.io API URL
-  
-     
-  
-          fetch(apiUrl)
-  
-              .then(response => {
-  
-                  if (!response.ok) {
-  
-                      return response.text().then(err => {throw new Error(`ipinfo.io API error! status: ${response.status}, message: ${err}`)}); // Include error message
-  
-                  }
-  
-                  return response.json();
-  
-              })
-  
-              .then(ipinfoData => {
-  
-                  const country = ipinfoData.country;
-  
-                  const region = ipinfoData.region;
-  
-                  const city = ipinfoData.city;
-  
-     
-  
-                  return fetch('/api/messages', { // Return the fetch promise
-  
-                      method: 'POST',
-  
-                      headers: {
-  
-                          'Content-Type': 'application/json'
-  
-                      },
-  
-                      body: JSON.stringify({ title, message, ipAddress, country, region, city })
-  
-                  }); // End of the fetch to /api/messages
-  
-              })
-  
-              .then(response => {
-  
-                  if (!response.ok) {
-  
-                      return response.text().then(err => {throw new Error(`HTTP error! status: ${response.status}, message: ${err}`)});
-  
-                  }
-  
-                  return response.json();
-  
-              })
-  
-              .then(data => {
-  
-                  console.log('Data sent to backend:', data);
-  
-                  createBottle(title, message, data.createdAt); // Pass createdAt
-  
-                  fetchAndDisplayMessages();
-  
-              })
-  
-              .catch(error => {
-  
-                  console.error('Error sending data to backend:', error);
-  
-                  alert("There was an error sending your message. Please try again later."); // Or any other user feedback
-  
-              });
-  
-      }
-  
+// Inside the sendDataToBackend function:
+function sendDataToBackend(title, message, ipAddress) {
+    if (ipAddress == null){
+        fetch('/api/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, message, ipAddress: null, country: null, region: null, city: null })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(err => {throw new Error(`HTTP error! status: ${response.status}, message: ${err}`)});
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data sent to backend:', data);
+            createBottle(title, message, data.createdAt);
+            fetchAndDisplayMessages();
+        })
+        .catch(error => {
+            console.error('Error sending data to backend:', error);
+            alert("There was an error sending your message. Please try again later.");
+        });
+        return;
+    }
+    const apiKey = '032783179f989d';
+    const apiUrl = `https://ipinfo.io/${ipAddress}?token=${apiKey}`;
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(err => {throw new Error(`ipinfo.io API error! status: ${response.status}, message: ${err}`)});
+            }
+            return response.json();
+        })
+        .then(ipinfoData => {
+            const country = ipinfoData.country;
+            const region = ipinfoData.region;
+            const city = ipinfoData.city;
+
+            return fetch('/api/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, message, ipAddress, country, region, city })
+            });
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(err => {throw new Error(`HTTP error! status: ${response.status}, message: ${err}`)});
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data sent to backend:', data);
+            createBottle(title, message, data.createdAt);
+            fetchAndDisplayMessages();
+        })
+        .catch(error => {
+            console.error('Error sending data to backend:', error);
+            alert("There was an error sending your message. Please try again later.");
+        });
+}
   
   
       // Store bottle positions
