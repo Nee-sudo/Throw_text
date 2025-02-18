@@ -651,3 +651,39 @@ document.addEventListener('DOMContentLoaded', function() {
   
   
   });
+
+  
+  // ocean.js
+
+// ocean.js
+
+const aboutButton = document.getElementById('about-button');
+const collabButton = document.getElementById('collab-button');
+const aboutSection = document.getElementById('about-section');
+const collabSection = document.getElementById('collab-section');
+const closeButtons = document.querySelectorAll('.close-section');
+
+function hideAllSections() {
+    aboutSection.style.display = 'none';
+    collabSection.style.display = 'none';
+}
+
+aboutButton.addEventListener('click', () => {
+    hideAllSections();
+    aboutSection.style.display = 'block';
+    aboutSection.scrollIntoView({ behavior: 'smooth' });
+});
+
+collabButton.addEventListener('click', () => {
+    hideAllSections();
+    collabSection.style.display = 'block';
+    collabSection.scrollIntoView({ behavior: 'smooth' });
+});
+
+closeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const sectionId = button.dataset.section;
+        const section = document.getElementById(sectionId);
+        section.style.display = 'none';
+    });
+});

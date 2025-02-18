@@ -1164,3 +1164,96 @@ text-align: center;
   left: 5px;
   border: 1px solid rgba(0, 0, 0, 0.2);
 }
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white; /* White background */
+  padding: 10px 20px; /* Add some padding */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: add a subtle shadow */
+}
+
+nav div:first-child { /* Bottle Message */
+  font-size: 24px;
+  font-weight: bold;
+}
+
+nav div:last-child { /* About and Collab links */
+  display: flex; /* Arrange links horizontally */
+  gap: 20px; /* Space between links */
+}
+
+nav div:last-child a {
+  text-decoration: none; /* Remove underlines from links */
+  color: #333; /* Dark gray color for links */
+  font-weight: 500; /* Medium font weight */
+}
+
+nav div:last-child a:hover {
+  color: #007bff; /* Change color on hover (e.g., blue) */
+}
+
+/* ocean.css */
+
+/* ocean.css */
+
+/* ocean.css */
+
+/* Hidden Section Styles (About and Collab) */
+.hidden-section {
+  display: none;
+  background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+  padding: 25px;
+  margin: 20px auto;
+  max-width: 700px; /* Adjust width as needed */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  text-align: left;
+  position: relative;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.hidden-section h2 {
+  color: #007bff; /* Primary color */
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.hidden-section p,
+.hidden-section ul,
+.hidden-section li {
+  margin-bottom: 15px;
+}
+
+.hidden-section ul {
+  list-style-type: disc;
+  margin-left: 25px;
+}
+
+.close-section {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #f0f0f0;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.close-section:hover {
+  background-color: #e0e0e0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hidden-section {
+      padding: 20px;
+      margin: 15px auto;
+      font-size: 15px;
+  }
+}
