@@ -30,5 +30,10 @@
 ## 💡 Inspiration  
 Throw-Your-Text was born out of the frustration of having to log in to apps like WhatsApp in a shared environment like a computer lab just to share a quick code snippet or text. This tool provides a lightweight, no-login alternative for fast and efficient sharing.  
 
----
+## 🤝 Contributions
+
+Contributors are welcome to help enhance the UI and add new features to improve the user experience. If you have ideas for better design, functionality, or new features, feel free to discuss them with the owner. Your contributions can help make this website  even more engaging and user-friendly!\
+Neer's Personal Journal prioritizes privacy, ensuring that only individuals with the proper credentials can access the content.
+
+
 
