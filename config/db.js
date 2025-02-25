@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
 
 const mongoURI =
   process.env.MONGO_URI ||
@@ -12,16 +13,5 @@ async function connectDB() {
     console.error("MongoDB connection error:", err);
   }
 }
-
-const URI =
-  process.env.MONGO_URI ||
-  "mongodb+srv://neer:bjFBXFCYd00Gifiv@pdf-uploading-site.ges8oic.mongodb.net/?retryWrites=true&w=majority"; // MongoDB URI
-// Connect to MongoDB (replace 'your_database_url' with your actual MongoDB URL)
-mongoose
-  .connect(URI, {})
-  .then(() => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((err) => console.error("MongoDB connection error:", err));
 
 module.exports = connectDB;

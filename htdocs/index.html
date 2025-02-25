@@ -23,7 +23,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
 
-    <!-- <link rel="stylesheet" href="index.css" /> -->
+    <link rel="stylesheet" href="index.css" />
     <title>Simple Text Storage</title>
     <style>
       body {
@@ -111,52 +111,6 @@
         background-color: #555555;
         padding: 10px 20px;
       }
-      .loader {
-        display: block;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        position: relative;
-        animation: rotate 1s linear infinite;
-      }
-      .loader::before {
-        content: "";
-        box-sizing: border-box;
-        position: absolute;
-        inset: 0px;
-        border-radius: 50%;
-        border: 5px solid #fff;
-        animation: prixClipFix 2s linear infinite;
-      }
-      @keyframes rotate {
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-      @keyframes prixClipFix {
-        0% {
-          clip-path: polygon(50% 50%, 0 0, 0 0, 0 0, 0 0, 0 0);
-        }
-        25% {
-          clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 0, 100% 0, 100% 0);
-        }
-        50% {
-          clip-path: polygon(
-            50% 50%,
-            0 0,
-            100% 0,
-            100% 100%,
-            100% 100%,
-            100% 100%
-          );
-        }
-        75% {
-          clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%);
-        }
-        100% {
-          clip-path: polygon(50% 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 0);
-        }
-      }
       .income-content {
         text-align: start;
       }
@@ -237,18 +191,6 @@
         margin-top: 2px;
         margin-bottom: 2px;
       }
-      .delete {
-        padding: 15px 15px;
-        background-color: #d51a1a;
-        color: white;
-        box-shadow: 5px 5px 10px #00000031;
-      }
-      .copy {
-        padding: 15px 15px;
-        background-color: #2579da;
-        color: white;
-        box-shadow: 5px 5px 10px #00000031;
-      }
     </style>
   </head>
   <body>
@@ -282,8 +224,6 @@
       <button onclick="saveText()">Save Text</button>
       <button onclick="loadTexts()">Load Texts</button>
     </div>
-    <p id="unique-visitors" style="color: white">Loading unique visitors...</p>
-    <p id="frequent-visitors"><!---Loading frequent visitors... --></p>
     <div id="formattedContent"></div>
 
     <script>
@@ -322,8 +262,7 @@
         const texts = await response.json();
 
         const textList = document.getElementById("formattedContent");
-        textList.innerHTML = `<div style="display: flex; justify-content: center; align-item: center;"></div><span class="loader"></span>`;
-        textList.innerHTML = ``;
+        textList.innerHTML = "";
 
         texts.forEach((text) => {
           const listItem = document.createElement("div");
@@ -459,11 +398,11 @@
           document.getElementById(
             "unique-visitors"
           ).innerText = `Unique Visitors: ${data.uniqueVisitors}`;
-          // document.getElementById(
-          //   "frequent-visitors"
-          // ).innerText = `Frequent Visitors: ${JSON.stringify(
-          //   data.frequentVisitors
-          // )}`;
+          document.getElementById(
+            "frequent-visitors"
+          ).innerText = `Frequent Visitors: ${JSON.stringify(
+            data.frequentVisitors
+          )}`;
         } catch (error) {
           console.error("Error loading visitor stats:", error);
         }
