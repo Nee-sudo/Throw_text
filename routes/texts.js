@@ -19,6 +19,7 @@ router.get("/all", async (req, res) => {
   try {
     const texts = await Text.find();
     const formattedTexts = texts.map(text => ({
+      _id: text._id, // Include the _id field
       content: text.content,
       dateTime: text.dateTime,
       serialNumber: text.serialNumber
