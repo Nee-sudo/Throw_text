@@ -301,12 +301,15 @@
         const text = quill.root.innerHTML;
 
         try {
-          await fetch("/api/texts/save", {
+            const dateTime = new Date().toISOString();
+            const serialNumber = Date.now(); // Using timestamp as a unique serial number
+
+            await fetch("/api/texts/save", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ content: text }),
+            body: JSON.stringify({ content: text, dateTime, serialNumber }),
           });
           // Clear the editor after successful submission
           quill.setText("");
@@ -331,7 +334,7 @@
         textList.innerHTML = `<div style="display: flex; justify-content: center; align-item: center;"></div><span class="loader"></span>`;
         textList.innerHTML = ``;
 
-        texts.forEach((text) => {
+        texts.forEach((text, index) => {
           const listItem = document.createElement("div");
           listItem.style.margin = "30px 0";
 
@@ -339,10 +342,19 @@
           const decodedContent = decodeHTMLEntities(text.content);
 
           listItem.innerHTML = `
-            <div class="outer-snippet"><div class="title-bar"><div class="red-dot dot"></div><div class="blue-dot dot"></div><div class="green-dot dot"></div></div><div class="inner-snippet">${text.content}</div></div>
-            <button class="delete" onclick="deleteText('${text._id}')">Delete</button>
-            <button class="copy" onclick="copyText('${text._id}')">Copy</button>
-        `;
+        <div class="outer-snippet">
+          <div class="title-bar">
+            <div class="red-dot dot"></div>
+            <div class="blue-dot dot"></div>
+            <div class="green-dot dot"></div>
+        <p style="color: white; float: left;">Count: ${index + 1}</p>
+        <p style="color: white; float: right;">DateTime: ${text.dateTime}</p>
+          </div>
+          <div class="inner-snippet">${text.content}</div>
+        </div>
+        <button class="delete" onclick="deleteText('${text._id}')">Delete</button>
+        <button class="copy" onclick="copyText('${text._id}')">Copy</button>
+          `;
 
           textList.appendChild(listItem);
         });
