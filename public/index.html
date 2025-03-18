@@ -118,7 +118,7 @@
             <div class="blue-dot dot"></div>
             <div class="green-dot dot"></div>
         <p style="color: white; float: left;">Count: ${index + 1}</p>
-        <p style="color: white; float: right;">DateTime: ${text.dateTime}</p>
+        <p style="color: white; float: right;">DateTime: ${convertUTCToIST(text.dateTime)}</p>
           </div>
           <div class="inner-snippet">${text.content}</div>
         </div>
@@ -236,6 +236,17 @@
         } catch (error) {
           console.error("Error tracking visitor:", error);
         }
+      }
+
+      function convertUTCToIST(utcTimestamp) {
+          const utcDate = new Date(utcTimestamp);
+      
+          // Convert to IST (UTC+5:30)
+          const offset = 5.5 * 60; // IST offset in minutes
+          const istDate = new Date(utcDate.getTime() + offset * 60 * 1000);
+      
+          // Format the IST date as desired
+          return istDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
       }
 
       // Get and display visitor stats
