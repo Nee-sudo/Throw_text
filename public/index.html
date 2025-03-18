@@ -239,6 +239,9 @@
       }
 
       function convertUTCToIST(utcTimestamp) {
+          if(!utcTimestamp){
+            return "N/A";
+          }
           const utcDate = new Date(utcTimestamp);
       
           // Convert to IST (UTC+5:30)
