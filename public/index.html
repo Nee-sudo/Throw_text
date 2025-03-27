@@ -188,6 +188,9 @@
           }
         }
 
+        // Attach copyText to the global window object
+        window.copyText = copyText;
+
         function copyFormattedText(formattedText) {
           const tempElement = document.createElement("div");
           tempElement.innerHTML = formattedText;
