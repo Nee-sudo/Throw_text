@@ -71,7 +71,7 @@ button {
   font-weight: 700;
   justify-content: center;
   line-height: 1;
-  margin: 0;
+  margin: 5px;
   outline: none;
   padding: 1rem 1.2rem;
   text-align: center;
@@ -209,7 +209,7 @@ button:hover {
 
 /* Light mode styles */
 body.light-mode {
-  background-color: #f4f4f4;
+  background-color: rgb(101, 40, 247);
   color: #333;
 }
 body.light-mode #formattedContent {

@@ -72,6 +72,38 @@
     </div>
     <p id="unique-visitors">Loading unique visitors...</p>
     <p id="frequent-visitors"><!---Loading frequent visitors... --></p>
+    <div class="search-container">
+      <input
+        type="text"
+        id="searchBar"
+        placeholder="Search texts..."
+        style="
+          width: 100%;
+          padding: 10px;
+          margin: 20px 0;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          font-size: 16px;
+        "
+        oninput="filterTexts(this.value)"
+      />
+    </div>
+    <script>
+      function filterTexts(query) {
+        const textList = document.getElementById("formattedContent");
+        const items = textList.querySelectorAll(".outer-snippet");
+        query = query.toLowerCase();
+
+        items.forEach((item) => {
+          const content = item.querySelector(".inner-snippet").textContent.toLowerCase();
+          if (content.includes(query)) {
+            item.style.display = "block";
+          } else {
+            item.style.display = "none";
+          }
+        });
+      }
+    </script>
     <div id="formattedContent"></div>
 
     <script>
@@ -137,9 +169,12 @@
                   <p style="color: white; float: right;">DateTime: ${convertUTCToIST(text.dateTime)}</p>
                 </div>
                 <div class="inner-snippet">${text.content}</div>
+                <center>
+                  <button class="copy" onclick="copyText('${text._id}')">Copy</button>
+                  <button class="delete" onclick="deleteText('${text._id}')">Delete</button>
+                </center>
               </div>
-              <button class="delete" onclick="deleteText('${text._id}')">Delete</button>
-              <button class="copy" onclick="copyText('${text._id}')">Copy</button>
+
             `;
 
             textList.appendChild(listItem);
