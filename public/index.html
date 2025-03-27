@@ -203,11 +203,15 @@
             await fetch(`/api/texts/${textId}`, {
               method: "DELETE",
             });
+            alert("Text deleted successfully!");
             loadTexts();
           } catch (error) {
             console.error("Error deleting text:", error);
           }
         }
+
+        // Attach deleteText to the global window object
+        window.deleteText = deleteText;
 
         async function copyText(textId) {
           try {

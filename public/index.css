@@ -273,3 +273,18 @@ body.light-mode #unique-visitors {
     transform: translateY(0);
   }
 }
+
+.search-container {
+  float: right;
+  width: fit-content;
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+  margin-top: 20px;
+}
+
+@media screen and (max-width: 400px) {
+  .search-container {
+    justify-content: center; /* Center align for smaller screens */
+    font-size: 0.9em; /* Make it smaller on mobile */
+  }
+}
