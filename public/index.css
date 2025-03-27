@@ -275,10 +275,10 @@ body.light-mode #unique-visitors {
 }
 
 .search-container {
-  float: right;
-  width: fit-content;
   display: flex;
-  justify-content: flex-end; /* Align to the right */
+  align-items: center; /* Center align vertically */
+  justify-content: center; /* Center align horizontally */
+  width: 50%; /* Take full width to center properly */
   margin-top: 20px;
 }
 

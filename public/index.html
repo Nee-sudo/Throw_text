@@ -72,22 +72,24 @@
     </div>
     <p id="unique-visitors">Loading unique visitors...</p>
     <p id="frequent-visitors"><!---Loading frequent visitors... --></p>
-    <div class="search-container">
-      <input
-        type="text"
-        id="searchBar"
-        placeholder="Search texts..."
-        style="
-          width: 100%;
-          padding: 10px;
-          margin: 20px 0;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          font-size: 16px;
-        "
-        oninput="filterTexts(this.value)"
-      />
-    </div>
+<center>
+  <div class="search-container">
+    <input
+      type="text"
+      id="searchBar"
+      placeholder="Search texts..."
+      style="
+        width: 100%;
+        padding: 10px;
+        margin: 20px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      "
+      oninput="filterTexts(this.value)"
+    />
+  </div>
+</center>
     <script>
       function filterTexts(query) {
         const textList = document.getElementById("formattedContent");
