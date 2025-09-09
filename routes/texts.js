@@ -14,18 +14,22 @@ router.post("/save", async (req, res) => {
   }
 });
 
-// Get all texts
+// Get all texts sorted by dateTime (descending)
 router.get("/all", async (req, res) => {
   try {
-    const texts = await Text.find();
+    const texts = await Text.find()
+      .sort({ dateTime: -1 }); // -1 means descending order
+
     const formattedTexts = texts.map(text => ({
-      _id: text._id, // Include the _id field
+      _id: text._id, 
       content: text.content,
       dateTime: text.dateTime,
       serialNumber: text.serialNumber
     }));
+
     res.status(200).json(formattedTexts);
   } catch (error) {
+    console.error("Error fetching texts:", error);
     res.status(500).send("Internal Server Error");
   }
 });
