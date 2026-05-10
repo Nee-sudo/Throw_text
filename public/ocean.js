@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('[ocean] ocean.js loaded');
 
 
 
@@ -431,16 +432,14 @@ function sendDataToBackend(title, message, ipAddress) {
   
   
   function createBottle(title, message, createdAt, countryCode) {
-  
-    const bottle = document.createElement('div');
-  
-    bottle.classList.add('bottle');
-  
-  
-  
-    const bottleWidth = 50; // Adjust as needed
-  
-    const bottleHeight = 80; // Adjust as needed
+        const bottle = document.createElement('div');
+
+        bottle.classList.add('bottle');
+
+        const bottleWidth = 50; // Adjust as needed
+        const bottleHeight = 80; // Adjust as needed
+
+
   
   
   
@@ -589,42 +588,71 @@ function sendDataToBackend(title, message, ipAddress) {
   
   
   function fetchAndDisplayMessages() {
-  
-    fetch('/api/messages')
-  
-        .then(response => {
-  
-            if (!response.ok) {
-  
-                throw new Error(`HTTP error! status: ${response.status}`);
-  
-            }
-  
-            return response.json();
-  
-        })
-  
-        .then(messages => {
-  
-            test.innerHTML = '';
-  
-            bottlePositions = []; // Clear existing positions
-  
-            messages.forEach(msg => {
-  
-                createBottle(msg.title, msg.message, msg.createdAt, msg.country);
-  
-            });
-  
-        })
-  
-        .catch(error => {
-  
-            console.error("Error fetching messages:", error);
-  
-        });
-  
+    try {
+      if (!test) console.warn('[ocean] #test element missing');
+      if (!pond) console.warn('[ocean] #pond element missing');
+
+      // Wait for pond to be laid out (mobile sometimes reports 0 size initially)
+      const pondRect = pond && pond.getBoundingClientRect ? pond.getBoundingClientRect() : null;
+      if (!pondRect || pondRect.width === 0 || pondRect.height === 0) {
+        console.warn('[ocean] pond has 0 size, deferring render');
+        // retry a bit later
+        setTimeout(() => {
+          try {
+            fetchAndDisplayMessages();
+          } catch (e) {
+            console.error('[ocean] retry fetchAndDisplayMessages failed:', e);
+          }
+        }, 250);
+        return;
+      }
+
+      fetch('/api/messages')
+        .then(async response => {
+          if (!response.ok) {
+            const bodyText = await response.text().catch(() => '');
+            throw new Error(`HTTP error! status: ${response.status} body: ${bodyText}`);
+          }
+          return response.json();
+        })
+        .then(messages => {
+          console.log('[ocean] fetched messages:', Array.isArray(messages) ? messages.length : messages);
+          if (pond) {
+            try {
+              console.log('[ocean] pond dims:', {
+                offsetWidth: pond.offsetWidth,
+                offsetHeight: pond.offsetHeight,
+                rect: pond.getBoundingClientRect()
+              });
+            } catch (e) {
+              console.error('[ocean] pond dims log failed:', e);
+            }
+          } else {
+            console.warn('[ocean] pond is null/undefined');
+          }
+
+          if (test) test.innerHTML = '';
+          bottlePositions = []; // Clear existing positions
+
+          (messages || []).forEach(msg => {
+            createBottle(msg.title, msg.message, msg.createdAt, msg.country);
+          });
+
+          try {
+            const count = document.querySelectorAll('.bottle').length;
+            console.log('[ocean] bottles in DOM after render:', count);
+          } catch (e) {
+            console.warn('[ocean] could not count bottles in DOM:', e);
+          }
+        })
+        .catch(error => {
+          console.error('[ocean] Error fetching messages:', error);
+        });
+    } catch (e) {
+      console.error('[ocean] fetchAndDisplayMessages crashed:', e);
+    }
   }
+
   
   
   

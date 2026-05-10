@@ -11,11 +11,12 @@
   body { /* Added body styling for centering input area */
     display: flex;
     flex-direction: column;
-    min-height: 100vh; /* Ensure body takes full viewport height */
+    min-height: 100dvh; /* Ensure body takes full viewport height */
 }
 .app {
   flex: 1; /* Allow the .app to take up remaining space */
-  width: 100%;
+  min-height: 100dvh;
+  width: 100vw;
   position: relative;
   font-family: sans-serif;
   overflow: hidden; /* Hide overflow from animations */
@@ -236,6 +237,14 @@
     animation: swimmingby 20s cubic-bezier(0.275, 0.385, 0.62, 1.275) infinite;
     /* transform: scale(0.65); */
   }
+  @media (max-width: 600px) {
+  .diver {
+    transform: scale(0.6); /* Shrink the diver for small screens */
+  }
+  .ocean-floor::after, .ocean-floor::before {
+    width: 200%; /* Ensure the floor floor covers the width when zoomed */
+  }
+}
   
   .happy-birthday {
     position: absolute;
