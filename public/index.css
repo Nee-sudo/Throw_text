@@ -1,14 +1,26 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0);
   text-align: center;
   background-color: #333;
+  -webkit-text-size-adjust: 100%;
 }
 header {
   background-color: hsl(212, 92%, 33%);
   color: white;
   padding: 10px 0;
+}
+header h1 {
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  margin: 0.25em 0;
 }
 .marque-container {
   background: #f4f4f4;
@@ -20,8 +32,8 @@ header {
 }
 #editor {
   margin: 20px auto;
-  width: 80%;
-  height: 300px;
+  width: min(92%, 900px);
+  height: clamp(200px, 40vh, 300px);
   background-color: hsl(0, 0%, 98%);
   color: #000;
   border: 1px solid #272727;
@@ -56,6 +68,22 @@ header {
   margin: 10px 0;
 }
 
+.dismiss-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background-color: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  min-height: 44px;
+  min-width: 44px;
+}
+.dismiss-btn--bubble {
+  color: white;
+}
+
 button {
   align-items: center;
   background-color: #fff;
@@ -67,13 +95,14 @@ button {
   display: inline-flex;
   flex: 1 1 auto;
   font-family: Inter, sans-serif;
-  font-size: 1.2rem;
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
   font-weight: 700;
   justify-content: center;
   line-height: 1;
   margin: 5px;
   outline: none;
-  padding: 1rem 1.2rem;
+  padding: 0.75rem 1rem;
+  min-height: 44px;
   text-align: center;
   text-decoration: none;
   transition: box-shadow 0.2s, -webkit-box-shadow 0.2s;
@@ -89,7 +118,33 @@ button:hover {
 #formattedContent {
   margin-top: 20px;
   background-color: #555555;
-  padding: 10px 20px;
+  padding: 10px clamp(8px, 3vw, 20px);
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.load-error {
+  color: #ffb4a2;
+  padding: 1rem;
+}
+
+.title-meta {
+  color: white;
+  margin: 0;
+  font-size: clamp(0.65rem, 2vw, 0.85rem);
+}
+.title-meta--left {
+  float: left;
+}
+.title-meta--right {
+  float: right;
+}
+.snippet-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 8px 0 12px;
 }
 
 /* Progress bar for loading */
@@ -134,15 +189,17 @@ button:hover {
 }
 .title-bar {
   position: relative;
-  width: calc(100% - 12px);
-  height: 30px;
+  width: 100%;
+  min-height: 30px;
   background: #282a31;
   border-radius: 5px 5px 0px 0px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: 5px;
-  padding-left: 15px;
+  padding: 6px 10px 6px 15px;
+  flex-wrap: wrap;
+  overflow: hidden;
 }
 .dot {
   width: 12px;
@@ -162,12 +219,14 @@ button:hover {
   background: #1e1e1e !important;
   color: #ccc;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 1em;
   padding-top: 0.5em;
   font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
-  font-size: 1em;
+  font-size: clamp(0.8rem, 2.5vw, 1em);
   text-align: left;
-  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-word;
   word-spacing: normal;
   word-break: normal;
   word-wrap: normal;
@@ -189,21 +248,62 @@ button:hover {
   margin-bottom: 2px;
 }
 .delete {
-  padding: 15px 15px;
+  padding: 12px 16px;
   background-color: #d51a1a;
   color: white;
   box-shadow: 5px 5px 10px #00000031;
+  flex: 1 1 120px;
+  max-width: 200px;
 }
 .copy {
-  padding: 15px 15px;
+  padding: 12px 16px;
   background-color: #2579da;
   color: white;
   box-shadow: 5px 5px 10px #00000031;
+  flex: 1 1 120px;
+  max-width: 200px;
 }
-@media screen and (max-width: 400px) {
-  .outer-snippet,
-  .outer-snippet * {
-    font-size: calc(100% - 2px) !important;
+
+#unique-visitors {
+  font-size: clamp(0.85rem, 2.5vw, 1rem);
+  padding: 0 12px;
+}
+
+@media screen and (max-width: 768px) {
+  .button-container {
+    padding: 0 12px;
+  }
+  .button-container button {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 140px;
+  }
+  #themeButton {
+    flex: 1 1 100%;
+  }
+  .title-meta--left,
+  .title-meta--right {
+    float: none;
+    width: 100%;
+    text-align: left;
+  }
+  #ad-bubble {
+    bottom: calc(12px + env(safe-area-inset-bottom, 0));
+    right: 12px;
+    width: 72px;
+    height: 72px;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  #editor {
+    width: 96%;
+    margin: 12px auto;
+  }
+  .delete,
+  .copy {
+    flex: 1 1 100%;
+    max-width: none;
   }
 }
 
@@ -276,15 +376,26 @@ body.light-mode #unique-visitors {
 
 .search-container {
   display: flex;
-  align-items: center; /* Center align vertically */
-  justify-content: center; /* Center align horizontally */
-  width: 50%; /* Take full width to center properly */
-  margin-top: 20px;
+  align-items: center;
+  justify-content: center;
+  width: min(92%, 560px);
+  margin: 20px auto 0;
+  padding: 0 12px;
 }
 
-@media screen and (max-width: 400px) {
-  .search-container {
-    justify-content: center; /* Center align for smaller screens */
-    font-size: 0.9em; /* Make it smaller on mobile */
+#searchBar {
+  width: 100%;
+  padding: 12px;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-bar::after,
+  #ad-bubble {
+    animation: none;
   }
 }

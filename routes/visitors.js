@@ -30,8 +30,8 @@ router.get("/track", async (req, res) => {
 router.get("/stats", async (req, res) => {
   try {
     const uniqueVisitors = await Visitor.countDocuments();
-    const frequentVisitors = await Visitor.find().sort({ visits: -1 }).limit(5);
-    res.json({ uniqueVisitors, frequentVisitors });
+    res.set("Cache-Control", "private, max-age=60");
+    res.json({ uniqueVisitors });
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }

@@ -17,7 +17,14 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(bodyParser.json());
 app.use(requestIp.mw());
-app.use(express.static(path.join(__dirname, "public")));
+
+// Cache static assets for faster repeat visits (especially mobile)
+app.use(
+  express.static(path.join(__dirname, "public"), {
+    maxAge: process.env.NODE_ENV === "production" ? "7d" : 0,
+    etag: true,
+  })
+);
 
 // Connect to DB
 const connectDB = require("./config/db");

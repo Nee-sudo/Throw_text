@@ -2,13 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Throw message bottles into a virtual ocean.">
     <title>ocean</title>
+    <link rel="preconnect" href="https://cdn.pixabay.com" crossorigin>
+    <link rel="dns-prefetch" href="https://flagcdn.com">
     <link rel="stylesheet" href="ocean.css">
+    <link rel="preload" href="bottle_1_no_bg.png" as="image">
+    <script>
+      window.__oceanMessagesPromise = fetch("/api/messages?limit=100")
+        .then(function (r) {
+          if (!r.ok) throw new Error("messages " + r.status);
+          return r.json();
+        })
+        .catch(function () {
+          return [];
+        });
+    </script>
 </head>
 <body>
-    <nav >
-        <div style="font-size: 24px; font-weight: bold;">Bottle Message</div>
+    <nav>
+        <div class="nav-title">Bottle Message</div>
         <div>
             <a href="#about-button" id="about-button">About </a>
             <a href="#collab-button" id="collab-button">Collab</a>
@@ -54,15 +68,16 @@
         <input type="text" id="message-input" placeholder="Enter your message..." maxlength="500">
         <button type="submit" id="throw-button">Throw</button>
     </div>
-    <audio id="ocean-sound" src="fish.mp3" autoplay loop></audio>
+    <audio id="ocean-sound" src="fish.mp3" loop preload="none"></audio>
     <div class="app">
         <div class="scene-container">
             <div class="sky" style="display: none;"></div>
             <div id="pond">
-                <video class="ocean-video" autoplay loop muted playsinline>
-                    <source src="https://cdn.pixabay.com/video/2023/05/06/161880-824623405_large.mp4" type="video/mp4">
+                <video class="ocean-video" autoplay loop muted playsinline preload="none" poster="bottle_1_no_bg.png">
+                    <source src="https://cdn.pixabay.com/video/2023/05/06/161880-824623405_large.mp4" type="video/mp4" media="(min-width: 769px)">
                     Your browser does not support the video tag.
                 </video>
+                <div class="ocean-video-fallback" aria-hidden="true"></div>
                 <div class="ocean">
                     <div class="ocean-floor">
                         <div class="ocean-floor-contents"></div>
@@ -120,12 +135,11 @@
                     <div class="bubble bubble--11"></div>
                     <div class="bubble bubble--12"></div>
                 </div>
-                <div class="test" id="test">
-
-                </div>
+                <div id="bottles-layer" class="bottles-layer" aria-live="polite"></div>
             </div>  </div> 
     </div>
 
-<script src="/ocean.js"></script>
+<script src="ocean-bottles.js" defer></script>
+<script src="ocean.js" defer></script>
 </body>
 </html>

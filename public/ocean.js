@@ -1,5 +1,22 @@
 document.addEventListener('DOMContentLoaded', function() {
-  console.log('[ocean] ocean.js loaded');
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const pond = document.getElementById('pond');
+  const messageInput = document.getElementById('message-input');
+  const messageTitle = document.getElementById('message-title');
+  const throwButton = document.getElementById('throw-button');
+
+  if (window.OceanBottles && pond) {
+    window.OceanBottles.init({ host: pond });
+  }
+
+  if (window.__oceanMessagesPromise && window.OceanBottles) {
+    window.__oceanMessagesPromise.then(function (messages) {
+      window.OceanBottles.renderMessages(messages);
+    });
+  }
+
+  function runDecorations() {
 
 
 
@@ -111,11 +128,10 @@ document.addEventListener('DOMContentLoaded', function() {
   
   
   
-        generateShells(4);
-  
-  
-  
-        function generateFish(count) {
+      const decorCount = isMobile ? 2 : 4;
+      generateShells(decorCount);
+
+      function generateFish(count) {
   
           for (let i = 0; i < count; i++) {
   
@@ -172,14 +188,14 @@ document.addEventListener('DOMContentLoaded', function() {
           }
   
         }
-  
-  
-  
-        generateFish(6);
-  
-  
-  
-  
+
+      if (!isMobile && !prefersReducedMotion) {
+        generateFish(6);
+      }
+
+
+
+
   
   
   
@@ -255,32 +271,18 @@ document.addEventListener('DOMContentLoaded', function() {
   
   
   
-        generateOctopus();
-  
-  
-  
-        generateShells(4);
-  
-        generateFish(6);
-  
-        generateOctopus();
-  
-  
-  
-  
-  
-        const pond = document.getElementById('pond');
-  
-        const test = document.getElementById('test');
-  
-        const messageInput = document.getElementById('message-input');
-  
-        const messageTitle = document.getElementById('message-title');
-  
-        const throwButton = document.getElementById('throw-button');
-  
-       
-  
+      if (!isMobile && !prefersReducedMotion) {
+        generateOctopus();
+      }
+  }
+
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(runDecorations, { timeout: 1200 });
+  } else {
+    setTimeout(runDecorations, 0);
+  }
+
+  if (throwButton) {
         throwButton.addEventListener('click', () => {
   
             const title = messageTitle.value.trim();
@@ -302,9 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const ipAddress = data.ip;
   
                         sendDataToBackend(title, message, ipAddress);
-  
-                        fetchAndDisplayMessages();
-  
+
                     })
   
                     .catch(error => {
@@ -348,9 +348,15 @@ function sendDataToBackend(title, message, ipAddress) {
             return response.json();
         })
         .then(data => {
-            console.log('Data sent to backend:', data);
-            createBottle(title, message, data.createdAt);
-            fetchAndDisplayMessages();
+            if (window.OceanBottles) {
+              window.OceanBottles.appendBottle({
+                title,
+                message,
+                createdAt: data.createdAt,
+                country: data.country,
+                _id: data._id,
+              });
+            }
         })
         .catch(error => {
             console.error('Error sending data to backend:', error);
@@ -388,146 +394,23 @@ function sendDataToBackend(title, message, ipAddress) {
             return response.json();
         })
         .then(data => {
-            console.log('Data sent to backend:', data);
-            createBottle(title, message, data.createdAt);
-            fetchAndDisplayMessages();
+            if (window.OceanBottles) {
+              window.OceanBottles.appendBottle({
+                title,
+                message,
+                createdAt: data.createdAt,
+                country: data.country,
+                _id: data._id,
+              });
+            }
         })
         .catch(error => {
             console.error('Error sending data to backend:', error);
             alert("There was an error sending your message. Please try again later.");
         });
 }
-  
-  
-      // Store bottle positions
-  
-  let bottlePositions = [];
-  
-  
-  
-  function checkOverlap(newBottle, existingBottle) {
-  
-      return !(
-  
-          newBottle.x + newBottle.width < existingBottle.x ||
-  
-          newBottle.x > existingBottle.x + existingBottle.width ||
-  
-          newBottle.y + newBottle.height < existingBottle.y ||
-  
-          newBottle.y > existingBottle.y + existingBottle.height
-  
-      );
-  
-  }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  function createBottle(title, message, createdAt, countryCode) {
-        const bottle = document.createElement('div');
 
-        bottle.classList.add('bottle');
-
-        const bottleWidth = 50; // Adjust as needed
-        const bottleHeight = 80; // Adjust as needed
-
-
-  
-  
-  
-    let x, y, overlap;
-  
-  
-  
-    do {
-  
-        x = Math.random() * (pond.offsetWidth - bottleWidth);
-  
-        y = Math.random() * (pond.offsetHeight - bottleHeight);
-  
-  
-  
-        overlap = false;
-  
-        const newBottle = { x, y, width: bottleWidth, height: bottleHeight };
-  
-  
-  
-        for (const existingBottle of bottlePositions) {
-  
-            if (checkOverlap(newBottle, existingBottle)) {
-  
-                overlap = true;
-  
-                break;
-  
-            }
-  
-        }
-  
-    } while (overlap);
-  
-  
-  
-    bottle.style.left = x + 'px';
-  
-    bottle.style.top = y + 'px';
-  
-  
-  
-    const titleSpan = document.createElement('span');
-  
-    titleSpan.textContent = title;
-  
-    bottle.appendChild(titleSpan);
-  
-  
-  
-    if (countryCode) {
-  
-        const flagImg = document.createElement('img');
-  
-        flagImg.src = `https://flagcdn.com/20x15/${countryCode.toLowerCase()}.png`;
-  
-        flagImg.alt = `Flag of ${countryCode}`;
-  
-        flagImg.classList.add('flag');
-  
-        bottle.appendChild(flagImg);
-  
-    }
-  
-  
-  
-    bottle.addEventListener('click', () => {
-  
-        showMessagePopup(title, message, createdAt);
-  
-    });
-  
-  
-  
-    pond.appendChild(bottle);
-  
-  
-  
-    // Store the bottle's position
-  
-    bottlePositions.push({ x, y, width: bottleWidth, height: bottleHeight });
-  
-  }
-  
-  
-  
-    function showMessagePopup(title, message ,createdAt) {
+  window.showMessagePopup = function showMessagePopup(title, message, createdAt) {
   
       const formattedDate = new Date(createdAt).toLocaleDateString('en-US', { // Format date
   
@@ -555,24 +438,23 @@ function sendDataToBackend(title, message, ipAddress) {
   
       popup.classList.add('message-popup');
   
-      popup.innerHTML = `<h2>${title}</h2><p class = "popupMessage">${message}</p><p class = "date">Date: ${formattedDate} ${formattedTime}</p><button class="close-button">Close</button>`; // Include date and time
-  
+      const h2 = document.createElement("h2");
+    h2.textContent = title;
+    const pMsg = document.createElement("p");
+    pMsg.className = "popupMessage";
+    pMsg.textContent = message;
+    const pDate = document.createElement("p");
+    pDate.className = "date";
+    pDate.textContent = `Date: ${formattedDate} ${formattedTime}`;
+    const closeButton = document.createElement("button");
+    closeButton.className = "close-button";
+    closeButton.type = "button";
+    closeButton.textContent = "Close";
+    popup.append(h2, pMsg, pDate, closeButton);
       document.body.appendChild(popup);
-  
-  
-  
-      // Add event listener to the close button:
-  
-      const closeButton = popup.querySelector('.close-button'); // Select the button using its class
-  
-      closeButton.addEventListener('click', closeMessagePopup); // Attach the event listener
-  
-  
-  
-  }
-  
-  
-  
+      closeButton.addEventListener('click', closeMessagePopup);
+  };
+
   function closeMessagePopup() {
   
     const popup = document.querySelector('.message-popup');
@@ -584,86 +466,43 @@ function sendDataToBackend(title, message, ipAddress) {
     }
   
   }
-  
-  
-  
-  function fetchAndDisplayMessages() {
-    try {
-      if (!test) console.warn('[ocean] #test element missing');
-      if (!pond) console.warn('[ocean] #pond element missing');
 
-      // Wait for pond to be laid out (mobile sometimes reports 0 size initially)
-      const pondRect = pond && pond.getBoundingClientRect ? pond.getBoundingClientRect() : null;
-      if (!pondRect || pondRect.width === 0 || pondRect.height === 0) {
-        console.warn('[ocean] pond has 0 size, deferring render');
-        // retry a bit later
-        setTimeout(() => {
-          try {
-            fetchAndDisplayMessages();
-          } catch (e) {
-            console.error('[ocean] retry fetchAndDisplayMessages failed:', e);
-          }
-        }, 250);
-        return;
-      }
-
-      fetch('/api/messages')
-        .then(async response => {
-          if (!response.ok) {
-            const bodyText = await response.text().catch(() => '');
-            throw new Error(`HTTP error! status: ${response.status} body: ${bodyText}`);
-          }
-          return response.json();
-        })
-        .then(messages => {
-          console.log('[ocean] fetched messages:', Array.isArray(messages) ? messages.length : messages);
-          if (pond) {
-            try {
-              console.log('[ocean] pond dims:', {
-                offsetWidth: pond.offsetWidth,
-                offsetHeight: pond.offsetHeight,
-                rect: pond.getBoundingClientRect()
-              });
-            } catch (e) {
-              console.error('[ocean] pond dims log failed:', e);
-            }
-          } else {
-            console.warn('[ocean] pond is null/undefined');
-          }
-
-          if (test) test.innerHTML = '';
-          bottlePositions = []; // Clear existing positions
-
-          (messages || []).forEach(msg => {
-            createBottle(msg.title, msg.message, msg.createdAt, msg.country);
-          });
-
-          try {
-            const count = document.querySelectorAll('.bottle').length;
-            console.log('[ocean] bottles in DOM after render:', count);
-          } catch (e) {
-            console.warn('[ocean] could not count bottles in DOM:', e);
-          }
-        })
-        .catch(error => {
-          console.error('[ocean] Error fetching messages:', error);
-        });
-    } catch (e) {
-      console.error('[ocean] fetchAndDisplayMessages crashed:', e);
-    }
+  const oceanVideo = document.querySelector('.ocean-video');
+  if (oceanVideo && isMobile) {
+    oceanVideo.removeAttribute('autoplay');
+    oceanVideo.pause();
+  } else if (oceanVideo && !isMobile) {
+    oceanVideo.setAttribute('preload', 'metadata');
   }
 
-  
-  
-  
-  setTimeout(() => {
-  
-    fetchAndDisplayMessages();
-  
-  }, 100);
-  
-  
-  
+  const oceanSound = document.getElementById('ocean-sound');
+  if (oceanSound && !isMobile) {
+    oceanSound.play().catch(() => {});
+  }
+
+  let resizeTimer = null;
+  window.addEventListener(
+    "resize",
+    function () {
+      if (!window.OceanBottles || !window.__oceanMessagesPromise) return;
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        const messages =
+          window.__oceanMessagesCache ||
+          (window.__oceanMessagesPromise
+            ? null
+            : []);
+        if (messages) {
+          window.OceanBottles.renderMessages(messages);
+          return;
+        }
+        window.__oceanMessagesPromise.then(function (list) {
+          window.OceanBottles.renderMessages(list);
+        });
+      }, 200);
+    },
+    { passive: true }
+  );
   });
 
   
@@ -671,33 +510,38 @@ function sendDataToBackend(title, message, ipAddress) {
 
 // ocean.js
 
-const aboutButton = document.getElementById('about-button');
-const collabButton = document.getElementById('collab-button');
-const aboutSection = document.getElementById('about-section');
-const collabSection = document.getElementById('collab-section');
-const closeButtons = document.querySelectorAll('.close-section');
+document.addEventListener('DOMContentLoaded', () => {
+  const aboutButton = document.getElementById('about-button');
+  const collabButton = document.getElementById('collab-button');
+  const aboutSection = document.getElementById('about-section');
+  const collabSection = document.getElementById('collab-section');
+  const closeButtons = document.querySelectorAll('.close-section');
+  if (!aboutButton || !collabButton) return;
 
-function hideAllSections() {
+  function hideAllSections() {
     aboutSection.style.display = 'none';
     collabSection.style.display = 'none';
-}
+  }
 
-aboutButton.addEventListener('click', () => {
+  aboutButton.addEventListener('click', (e) => {
+    e.preventDefault();
     hideAllSections();
     aboutSection.style.display = 'block';
     aboutSection.scrollIntoView({ behavior: 'smooth' });
-});
+  });
 
-collabButton.addEventListener('click', () => {
+  collabButton.addEventListener('click', (e) => {
+    e.preventDefault();
     hideAllSections();
     collabSection.style.display = 'block';
     collabSection.scrollIntoView({ behavior: 'smooth' });
-});
+  });
 
-closeButtons.forEach(button => {
+  closeButtons.forEach((button) => {
     button.addEventListener('click', () => {
-        const sectionId = button.dataset.section;
-        const section = document.getElementById(sectionId);
-        section.style.display = 'none';
+      const sectionId = button.dataset.section;
+      const section = document.getElementById(sectionId);
+      if (section) section.style.display = 'none';
     });
+  });
 });

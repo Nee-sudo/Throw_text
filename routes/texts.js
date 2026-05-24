@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Text = require("../models/Text");
 
+const MAX_LIMIT = 100;
+const DEFAULT_LIMIT = 50;
+
 // Save text
 router.post("/save", async (req, res) => {
   try {
@@ -14,20 +17,27 @@ router.post("/save", async (req, res) => {
   }
 });
 
-// Get all texts sorted by dateTime (descending)
+// Get texts (paginated, newest first)
 router.get("/all", async (req, res) => {
   try {
-    const texts = await Text.find()
-      .sort({ dateTime: -1 }); // -1 means descending order
+    const limit = Math.min(
+      parseInt(req.query.limit, 10) || DEFAULT_LIMIT,
+      MAX_LIMIT
+    );
+    const skip = Math.max(parseInt(req.query.skip, 10) || 0, 0);
 
-    const formattedTexts = texts.map(text => ({
-      _id: text._id, 
-      content: text.content,
-      dateTime: text.dateTime,
-      serialNumber: text.serialNumber
-    }));
+    const [texts, total] = await Promise.all([
+      Text.find()
+        .select("content dateTime serialNumber")
+        .sort({ serialNumber: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Text.countDocuments(),
+    ]);
 
-    res.status(200).json(formattedTexts);
+    res.set("Cache-Control", "private, max-age=10");
+    res.status(200).json({ texts, total, limit, skip });
   } catch (error) {
     console.error("Error fetching texts:", error);
     res.status(500).send("Internal Server Error");
@@ -37,13 +47,11 @@ router.get("/all", async (req, res) => {
 // Get specific text
 router.get("/:textId", async (req, res) => {
   try {
-    const text = await Text.findById(req.params.textId);
+    const text = await Text.findById(req.params.textId)
+      .select("content dateTime serialNumber")
+      .lean();
     if (!text) return res.status(404).json({ error: "Text not found" });
-    res.json({
-      content: text.content,
-      dateTime: text.dateTime,
-      serialNumber: text.serialNumber
-    });
+    res.json(text);
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }

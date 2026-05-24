@@ -6,4 +6,7 @@ const textSchema = new mongoose.Schema({
   serialNumber: { type: Number, required: true },
 });
 
+textSchema.index({ dateTime: -1 });
+textSchema.index({ serialNumber: -1 });
+
 module.exports = mongoose.model("Text", textSchema);
