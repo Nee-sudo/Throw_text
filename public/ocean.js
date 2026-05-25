@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const pond = document.getElementById('pond');
   const messageInput = document.getElementById('message-input');
@@ -66,8 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
-    const decorCount = isMobile ? 2 : 4;
-    generateShells(decorCount);
+    generateShells(4);
 
     function generateFish(count) {
       for (let i = 0; i < count; i++) {
@@ -97,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
-    if (!isMobile && !prefersReducedMotion) {
+    if (!prefersReducedMotion) {
       generateFish(6);
     }
 
@@ -138,16 +136,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
 
-    if (!isMobile && !prefersReducedMotion) {
+    if (!prefersReducedMotion) {
       generateOctopus();
     }
   }
 
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(runDecorations, { timeout: 1200 });
-  } else {
-    setTimeout(runDecorations, 0);
-  }
+  runDecorations();
 
   function sendDataToBackend(title, message, ipAddress) {
     if (ipAddress == null) {
@@ -301,15 +295,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   const oceanVideo = document.querySelector('.ocean-video');
-  if (oceanVideo && isMobile) {
-    oceanVideo.removeAttribute('autoplay');
-    oceanVideo.pause();
-  } else if (oceanVideo && !isMobile) {
+  if (oceanVideo) {
     oceanVideo.setAttribute('preload', 'metadata');
+    oceanVideo.play().catch(() => {});
   }
 
   const oceanSound = document.getElementById('ocean-sound');
-  if (oceanSound && !isMobile) {
+  if (oceanSound) {
     oceanSound.play().catch(() => {});
   }
 
@@ -317,20 +309,20 @@ document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener(
     'resize',
     function () {
-      if (!window.OceanBottles || !window.__oceanMessagesPromise) return;
+      if (!window.OceanBottles) return;
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
-        const messages =
-          window.__oceanMessagesCache ||
-          (window.__oceanMessagesPromise ? null : []);
-        if (messages) {
+        const messages = window.__oceanMessagesCache;
+        if (messages && messages.length) {
           window.OceanBottles.renderMessages(messages);
           return;
         }
-        window.__oceanMessagesPromise.then(function (list) {
-          window.OceanBottles.renderMessages(list);
-        });
-      }, 200);
+        if (window.__oceanMessagesPromise) {
+          window.__oceanMessagesPromise.then(function (list) {
+            window.OceanBottles.renderMessages(list);
+          });
+        }
+      }, 250);
     },
     { passive: true }
   );
