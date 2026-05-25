@@ -30,7 +30,7 @@ router.get("/", async (req, res) => {
       .limit(limit)
       .lean();
 
-    res.set("Cache-Control", "private, max-age=15");
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate");
     res.json(messages);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch messages" });

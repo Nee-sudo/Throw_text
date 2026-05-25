@@ -9,16 +9,7 @@
     <link rel="dns-prefetch" href="https://flagcdn.com">
     <link rel="stylesheet" href="ocean.css">
     <link rel="preload" href="bottle_1_no_bg.png" as="image">
-    <script>
-      window.__oceanMessagesPromise = fetch("/api/messages?limit=100")
-        .then(function (r) {
-          if (!r.ok) throw new Error("messages " + r.status);
-          return r.json();
-        })
-        .catch(function () {
-          return [];
-        });
-    </script>
+    <script src="ocean-cache.js"></script>
 </head>
 <body>
     <nav>

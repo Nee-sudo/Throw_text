@@ -36,7 +36,7 @@ router.get("/all", async (req, res) => {
       Text.countDocuments(),
     ]);
 
-    res.set("Cache-Control", "private, max-age=10");
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate");
     res.status(200).json({ texts, total, limit, skip });
   } catch (error) {
     console.error("Error fetching texts:", error);

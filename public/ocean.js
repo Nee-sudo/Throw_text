@@ -9,11 +9,36 @@ document.addEventListener('DOMContentLoaded', function() {
     window.OceanBottles.init({ host: pond });
   }
 
-  if (window.__oceanMessagesPromise && window.OceanBottles) {
-    window.__oceanMessagesPromise.then(function (messages) {
-      window.OceanBottles.renderMessages(messages);
-    });
+  function loadOceanMessages() {
+    if (!window.OceanBottles) return;
+
+    if (window.OceanCache) {
+      window.OceanCache.fetchFresh(100).then(function (messages) {
+        window.OceanBottles.renderMessages(messages);
+      });
+      return;
+    }
+
+    if (window.__oceanMessagesPromise) {
+      window.__oceanMessagesPromise.then(function (messages) {
+        window.OceanBottles.renderMessages(messages);
+      });
+    }
   }
+
+  function refreshOceanAfterThrow() {
+    if (window.OceanBottles && window.OceanBottles.reloadFromServer) {
+      return window.OceanBottles.reloadFromServer();
+    }
+    if (window.OceanCache && window.OceanBottles) {
+      return window.OceanCache.fetchFresh(100).then(function (messages) {
+        window.OceanBottles.renderMessages(messages);
+      });
+    }
+    return Promise.resolve();
+  }
+
+  loadOceanMessages();
 
   function runDecorations() {
     const oceanFloorContents = document.querySelector('.ocean-floor-contents');
@@ -165,17 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
           return response.json();
         })
-        .then((data) => {
-          if (window.OceanBottles) {
-            window.OceanBottles.appendBottle({
-              title,
-              message,
-              createdAt: data.createdAt,
-              country: data.country,
-              _id: data._id,
-            });
-          }
-        })
+        .then(() => refreshOceanAfterThrow())
         .catch((error) => {
           console.error('Error sending data to backend:', error);
           alert('There was an error sending your message. Please try again later.');
@@ -211,17 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return response.json();
       })
-      .then((data) => {
-        if (window.OceanBottles) {
-          window.OceanBottles.appendBottle({
-            title,
-            message,
-            createdAt: data.createdAt,
-            country: data.country,
-            _id: data._id,
-          });
-        }
-      })
+      .then(() => refreshOceanAfterThrow())
       .catch((error) => {
         console.error('Error sending data to backend:', error);
         alert('There was an error sending your message. Please try again later.');
@@ -312,15 +317,15 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!window.OceanBottles) return;
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
+        if (window.OceanCache) {
+          window.OceanCache.fetchFresh(100).then(function (list) {
+            window.OceanBottles.renderMessages(list);
+          });
+          return;
+        }
         const messages = window.__oceanMessagesCache;
         if (messages && messages.length) {
           window.OceanBottles.renderMessages(messages);
-          return;
-        }
-        if (window.__oceanMessagesPromise) {
-          window.__oceanMessagesPromise.then(function (list) {
-            window.OceanBottles.renderMessages(list);
-          });
         }
       }, 250);
     },

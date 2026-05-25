@@ -228,7 +228,11 @@
     }
 
     clearBottles();
-    global.__oceanMessagesCache = list.slice();
+    if (global.OceanCache) {
+      global.OceanCache.set(list);
+    } else {
+      global.__oceanMessagesCache = list.slice();
+    }
 
     const chunkSize = layout.chunkSize;
     let cursor = 0;
@@ -288,13 +292,6 @@
     return { host, layer };
   }
 
-  function cacheMessage(msg) {
-    if (!global.__oceanMessagesCache) {
-      global.__oceanMessagesCache = [];
-    }
-    global.__oceanMessagesCache.unshift(msg);
-  }
-
   function appendBottle(msg) {
     if (!layer || !host) return;
 
@@ -302,8 +299,18 @@
     const bottle = buildBottle(msg, messageStore.size);
     if (bottle) {
       layer.appendChild(bottle);
-      cacheMessage(msg);
+      if (global.OceanCache) {
+        global.OceanCache.add(msg);
+      }
     }
+  }
+
+  function reloadFromServer() {
+    if (!global.OceanCache) return Promise.resolve([]);
+    return global.OceanCache.fetchFresh().then(function (messages) {
+      renderMessages(messages);
+      return messages;
+    });
   }
 
   global.OceanBottles = {
@@ -312,5 +319,6 @@
     appendBottle,
     clearBottles,
     measureHost,
+    reloadFromServer,
   };
 })(window);

@@ -4,6 +4,17 @@
   const TEXTS_LIMIT = 50;
   let quill = null;
   let textsAbort = null;
+  let textsCache = null;
+
+  function clearTextsCache() {
+    textsCache = null;
+  }
+
+  function setTextsCache(texts) {
+    clearTextsCache();
+    textsCache = Array.isArray(texts) ? texts.slice() : [];
+    return textsCache;
+  }
 
   function convertUTCToIST(utcTimestamp) {
     if (!utcTimestamp) return "N/A";
@@ -78,12 +89,17 @@
   async function loadTexts() {
     if (textsAbort) textsAbort.abort();
     textsAbort = new AbortController();
+    clearTextsCache();
     showLoading();
 
     try {
       const response = await fetch(
         `/api/texts/all?limit=${TEXTS_LIMIT}`,
-        { signal: textsAbort.signal }
+        {
+          signal: textsAbort.signal,
+          cache: "no-store",
+          headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+        }
       );
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
@@ -95,6 +111,7 @@
           : [];
 
       texts.sort((a, b) => b.serialNumber - a.serialNumber);
+      setTextsCache(texts);
 
       const textList = document.getElementById("formattedContent");
       const fragment = document.createDocumentFragment();
