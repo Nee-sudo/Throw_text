@@ -28,7 +28,20 @@ app.use(
 
 // Connect to DB
 const connectDB = require("./config/db");
-connectDB();
+
+// Ensure every request waits for a ready MongoDB connection before hitting
+// any route that touches the DB. This fixes the race condition where a
+// cold serverless instance's connection was still negotiating while a
+// query tried to run, causing "buffering timed out" errors under load.
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error("DB connection failed:", err);
+    res.status(503).send("Database unavailable, please retry.");
+  }
+});
 
 // Routes
 app.use("/api/texts", textRoutes);
