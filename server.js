@@ -4,8 +4,6 @@ const bodyParser = require("body-parser");
 const path = require("path");
 require("dotenv").config();
 const requestIp = require("request-ip");
-const dns = require("dns");
-dns.setServers(["1.1.1.1","8.8.8.8"]); // Ensure IPv4 is prioritized over IPv6
 
 // Import Routes
 const textRoutes = require("./routes/texts");
