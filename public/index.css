@@ -247,8 +247,7 @@ button:hover {
   margin-top: 2px;
   margin-bottom: 2px;
 }
-.delete {
-  display: none; /* Hide the delete button by default */
+.delete {/* Hide the delete button by default */
   padding: 12px 16px;
   background-color: #d51a1a;
   color: white;
@@ -399,4 +398,74 @@ body.light-mode #unique-visitors {
   #ad-bubble {
     animation: none;
   }
+}
+/* Admin password modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+.modal-overlay[hidden] {
+  display: none;
+}
+.modal-box {
+  background: #1e1e1e;
+  color: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+.modal-box h2 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+.modal-box p {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: #ccc;
+}
+#adminPasswordInput {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #2c2c2c;
+  color: #fff;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+.modal-error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin: 8px 0 0;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+.modal-actions button {
+  padding: 10px 16px;
+}
+#adminPasswordSubmit {
+  background-color: #d51a1a;
+  color: white;
+}
+
+body.light-mode .modal-box {
+  background: #fff;
+  color: #333;
+}
+body.light-mode #adminPasswordInput {
+  background: #f5f5f5;
+  color: #333;
+  border-color: #ccc;
 }

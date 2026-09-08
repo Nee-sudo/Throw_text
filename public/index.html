@@ -79,5 +79,31 @@
       />
     </div>
     <main id="formattedContent" aria-live="polite"></main>
+
+    <div id="adminPasswordOverlay" class="modal-overlay" hidden>
+      <div
+        class="modal-box"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="adminPasswordTitle"
+      >
+        <h2 id="adminPasswordTitle">Admin password required</h2>
+        <p>Enter the admin password to delete this text.</p>
+        <form id="adminPasswordForm">
+          <input
+            type="password"
+            id="adminPasswordInput"
+            autocomplete="current-password"
+            placeholder="Password"
+            required
+          />
+          <p id="adminPasswordError" class="modal-error" hidden></p>
+          <div class="modal-actions">
+            <button type="button" id="adminPasswordCancel">Cancel</button>
+            <button type="submit" id="adminPasswordSubmit">Delete</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </body>
 </html>

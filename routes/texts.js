@@ -1,6 +1,24 @@
 const express = require("express");
 const router = express.Router();
+const crypto = require("crypto");
 const Text = require("../models/Text");
+
+// Constant-time password check so response timing can't leak
+// how many characters were correct.
+function isAdminPasswordCorrect(candidate) {
+  const expected = process.env.ADMIN_PASSWORD || "";
+  if (!expected || typeof candidate !== "string") return false;
+
+  const a = Buffer.from(candidate);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) {
+    // Still run a comparison of equal length so failing fast on
+    // length doesn't itself become a timing signal.
+    crypto.timingSafeEqual(b, b);
+    return false;
+  }
+  return crypto.timingSafeEqual(a, b);
+}
 
 const MAX_LIMIT = 100;
 const DEFAULT_LIMIT = 50;
@@ -57,13 +75,23 @@ router.get("/:textId", async (req, res) => {
   }
 });
 
-// Delete text
+// Delete text (requires admin password)
 router.delete("/:textId", async (req, res) => {
   try {
-    await Text.findByIdAndDelete(req.params.textId);
-    res.status(200).send("Text deleted successfully.");
+    const { password } = req.body || {};
+
+    if (!isAdminPasswordCorrect(password)) {
+      return res.status(401).json({ error: "Incorrect admin password." });
+    }
+
+    const deleted = await Text.findByIdAndDelete(req.params.textId);
+    if (!deleted) {
+      return res.status(404).json({ error: "Text not found." });
+    }
+
+    res.status(200).json({ message: "Text deleted successfully." });
   } catch (error) {
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

@@ -149,13 +149,67 @@
     }
   }
 
-  async function deleteText(textId) {
+  let pendingDeleteTextId = null;
+
+  function getAdminModalEls() {
+    return {
+      overlay: document.getElementById("adminPasswordOverlay"),
+      form: document.getElementById("adminPasswordForm"),
+      input: document.getElementById("adminPasswordInput"),
+      error: document.getElementById("adminPasswordError"),
+      cancelBtn: document.getElementById("adminPasswordCancel"),
+    };
+  }
+
+  function openAdminPasswordModal(textId) {
+    pendingDeleteTextId = textId;
+    const { overlay, input, error } = getAdminModalEls();
+    error.hidden = true;
+    error.textContent = "";
+    input.value = "";
+    overlay.hidden = false;
+    input.focus();
+  }
+
+  function closeAdminPasswordModal() {
+    pendingDeleteTextId = null;
+    const { overlay, input } = getAdminModalEls();
+    overlay.hidden = true;
+    input.value = "";
+  }
+
+  async function submitDeleteWithPassword(password) {
+    const { error, input } = getAdminModalEls();
+    if (!pendingDeleteTextId) return;
+
     try {
-      await fetch(`/api/texts/${textId}`, { method: "DELETE" });
+      const response = await fetch(`/api/texts/${pendingDeleteTextId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+
+      if (response.status === 401) {
+        error.textContent = "Incorrect password. Try again.";
+        error.hidden = false;
+        input.value = "";
+        input.focus();
+        return;
+      }
+
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      closeAdminPasswordModal();
       loadTexts();
-    } catch (error) {
-      console.error("Error deleting text:", error);
+    } catch (err) {
+      console.error("Error deleting text:", err);
+      error.textContent = "Something went wrong. Please try again.";
+      error.hidden = false;
     }
+  }
+
+  function deleteText(textId) {
+    openAdminPasswordModal(textId);
   }
 
   async function copyText(textId) {
@@ -267,6 +321,23 @@
       if (!id) return;
       if (btn.dataset.action === "copy") copyText(id);
       if (btn.dataset.action === "delete") deleteText(id);
+    });
+
+    const { form, cancelBtn, overlay, input } = getAdminModalEls();
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      submitDeleteWithPassword(input.value);
+    });
+
+    cancelBtn.addEventListener("click", closeAdminPasswordModal);
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeAdminPasswordModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !overlay.hidden) closeAdminPasswordModal();
     });
   }
 
