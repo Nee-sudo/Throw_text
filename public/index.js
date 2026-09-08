@@ -33,7 +33,7 @@ async function saveText() {
       const listItem = document.createElement('div');
       listItem.innerHTML = `
       <div>${text.content}</div>
-      <button class="delete" onclick="deleteText('${text._id}')">Delete</button>
+      <button class="delete" onclick="deleteText('${text._id}')">Deleted</button>
       <button class="copy" onclick="copyText('${text._id}')">Copy</button>
     `;
       textList.appendChild(listItem);

@@ -248,6 +248,7 @@ button:hover {
   margin-bottom: 2px;
 }
 .delete {
+  display: none; /* Hide the delete button by default */
   padding: 12px 16px;
   background-color: #d51a1a;
   color: white;
