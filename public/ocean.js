@@ -4,17 +4,89 @@ document.addEventListener('DOMContentLoaded', function() {
   const messageInput = document.getElementById('message-input');
   const messageTitle = document.getElementById('message-title');
   const throwButton = document.getElementById('throw-button');
+  const statusEl = document.getElementById('ocean-status');
+  const statusTitleEl = document.getElementById('ocean-status-title');
+  const statusBodyEl = document.getElementById('ocean-status-body');
+  const refreshButton = document.getElementById('refresh-button');
 
   if (window.OceanBottles && pond) {
     window.OceanBottles.init({ host: pond });
   }
 
+  /* ---------------------------------------------------------
+     Toast notifications (replaces alert())
+     --------------------------------------------------------- */
+
+  function showToast(message, type) {
+    const stack = document.getElementById('toast-stack');
+    if (!stack) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast' + (type ? ' toast--' + type : '');
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.textContent = message;
+    stack.appendChild(toast);
+
+    const remove = function () {
+      toast.classList.add('is-leaving');
+      setTimeout(function () {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 200);
+    };
+
+    setTimeout(remove, 4000);
+  }
+
+  /* ---------------------------------------------------------
+     Loading / empty ocean status
+     --------------------------------------------------------- */
+
+  function clearStatusButton() {
+    if (!statusEl) return;
+    const existingButton = statusEl.querySelector('button');
+    if (existingButton) existingButton.remove();
+  }
+
+  function setOceanStatus(mode) {
+    if (!statusEl || !statusTitleEl || !statusBodyEl) return;
+
+    if (mode === 'loading') {
+      clearStatusButton();
+      statusEl.hidden = false;
+      statusTitleEl.textContent = 'Listening to the ocean\u2026';
+      statusBodyEl.textContent = '';
+      return;
+    }
+
+    if (mode === 'empty') {
+      clearStatusButton();
+      statusEl.hidden = false;
+      statusTitleEl.textContent = 'The ocean is quiet.';
+      statusBodyEl.textContent = 'Be the first to release a message.';
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = 'Release a Bottle';
+      button.addEventListener('click', function () {
+        if (messageTitle) messageTitle.focus();
+      });
+      statusEl.appendChild(button);
+      return;
+    }
+
+    clearStatusButton();
+    statusEl.hidden = true;
+  }
+
   function loadOceanMessages() {
     if (!window.OceanBottles) return;
+
+    setOceanStatus('loading');
 
     if (window.OceanCache) {
       window.OceanCache.fetchFresh(100).then(function (messages) {
         window.OceanBottles.renderMessages(messages);
+        setOceanStatus(messages && messages.length ? 'hidden' : 'empty');
       });
       return;
     }
@@ -22,20 +94,53 @@ document.addEventListener('DOMContentLoaded', function() {
     if (window.__oceanMessagesPromise) {
       window.__oceanMessagesPromise.then(function (messages) {
         window.OceanBottles.renderMessages(messages);
+        setOceanStatus(messages && messages.length ? 'hidden' : 'empty');
       });
     }
   }
 
   function refreshOceanAfterThrow() {
     if (window.OceanBottles && window.OceanBottles.reloadFromServer) {
-      return window.OceanBottles.reloadFromServer();
+      return window.OceanBottles.reloadFromServer().then(function (messages) {
+        setOceanStatus(messages && messages.length ? 'hidden' : 'empty');
+        return messages;
+      });
     }
     if (window.OceanCache && window.OceanBottles) {
       return window.OceanCache.fetchFresh(100).then(function (messages) {
         window.OceanBottles.renderMessages(messages);
+        setOceanStatus(messages && messages.length ? 'hidden' : 'empty');
+        return messages;
       });
     }
     return Promise.resolve();
+  }
+
+  function refreshOceanManually() {
+    if (!window.OceanBottles || !refreshButton) return;
+
+    refreshButton.disabled = true;
+    refreshButton.classList.add('is-loading');
+
+    refreshOceanAfterThrow()
+      .then(function (messages) {
+        const count = Array.isArray(messages) ? messages.length : 0;
+        showToast(
+          count ? 'Ocean refreshed \u2014 new bottles are in.' : 'Ocean refreshed.',
+          'success'
+        );
+      })
+      .catch(function () {
+        showToast('Could not refresh the ocean. Please try again.', 'error');
+      })
+      .finally(function () {
+        refreshButton.disabled = false;
+        refreshButton.classList.remove('is-loading');
+      });
+  }
+
+  if (refreshButton) {
+    refreshButton.addEventListener('click', refreshOceanManually);
   }
 
   loadOceanMessages();
@@ -190,10 +295,17 @@ document.addEventListener('DOMContentLoaded', function() {
           }
           return response.json();
         })
-        .then(() => refreshOceanAfterThrow())
+        .then(() => {
+          showToast('Your message has been released into the ocean.', 'success');
+          closeOverlay();
+          return refreshOceanAfterThrow();
+        })
         .catch((error) => {
           console.error('Error sending data to backend:', error);
-          alert('There was an error sending your message. Please try again later.');
+          showToast('Unable to release your message. Please try again.', 'error');
+        })
+        .finally(() => {
+          if (throwButton) throwButton.disabled = false;
         });
       return;
     }
@@ -226,10 +338,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return response.json();
       })
-      .then(() => refreshOceanAfterThrow())
+      .then(() => {
+        showToast('Your message has been released into the ocean.', 'success');
+        closeOverlay();
+        return refreshOceanAfterThrow();
+      })
       .catch((error) => {
         console.error('Error sending data to backend:', error);
-        alert('There was an error sending your message. Please try again later.');
+        showToast('Unable to release your message. Please try again.', 'error');
+      })
+      .finally(() => {
+        if (throwButton) throwButton.disabled = false;
       });
   }
 
@@ -239,6 +358,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const message = messageInput.value.trim();
 
       if (title !== '' && message !== '') {
+        throwButton.disabled = true;
+
         fetch('https://api.ipify.org?format=json')
           .then((response) => response.json())
           .then((data) => {
@@ -256,47 +377,122 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  window.showMessagePopup = function showMessagePopup(title, message, createdAt) {
+  /* ---------------------------------------------------------
+     Message popup (accessible modal)
+     --------------------------------------------------------- */
+
+  let lastFocusedElement = null;
+
+  window.showMessagePopup = function showMessagePopup(title, message, createdAt, country) {
+    lastFocusedElement = document.activeElement;
+
     const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
+      month: 'short',
       day: 'numeric',
+      year: 'numeric',
     });
 
     const formattedTime = new Date(createdAt).toLocaleTimeString('en-US', {
       hour: 'numeric',
       minute: 'numeric',
-      second: 'numeric',
     });
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
 
     const popup = document.createElement('div');
     popup.classList.add('message-popup');
+    popup.setAttribute('role', 'dialog');
+    popup.setAttribute('aria-modal', 'true');
+    popup.setAttribute('aria-labelledby', 'message-popup-title');
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'close-button';
+    closeButton.type = 'button';
+    closeButton.setAttribute('aria-label', 'Return to ocean');
+    closeButton.textContent = '\u2715';
+
+    const eyebrow = document.createElement('p');
+    eyebrow.className = 'popup-eyebrow';
+    eyebrow.textContent = 'Message found';
 
     const h2 = document.createElement('h2');
+    h2.id = 'message-popup-title';
     h2.textContent = title;
 
     const pMsg = document.createElement('p');
     pMsg.className = 'popupMessage';
     pMsg.textContent = message;
 
-    const pDate = document.createElement('p');
-    pDate.className = 'date';
-    pDate.textContent = `Date: ${formattedDate} ${formattedTime}`;
+    const meta = document.createElement('p');
+    meta.className = 'popup-meta';
+    meta.textContent = `\uD83C\uDF0A Released ${formattedDate} \u00B7 ${formattedTime}`;
 
-    const closeButton = document.createElement('button');
-    closeButton.className = 'close-button';
-    closeButton.type = 'button';
-    closeButton.textContent = 'Close';
+    if (country) {
+      const flagImg = document.createElement('img');
+      flagImg.alt = '';
+      flagImg.loading = 'lazy';
+      flagImg.decoding = 'async';
+      flagImg.src = `https://flagcdn.com/20x15/${String(country).toLowerCase()}.png`;
+      meta.appendChild(flagImg);
+    }
 
-    popup.append(h2, pMsg, pDate, closeButton);
-    document.body.appendChild(popup);
+    const returnButton = document.createElement('button');
+    returnButton.className = 'return-button';
+    returnButton.type = 'button';
+    returnButton.textContent = 'Return to Ocean';
 
-    closeButton.addEventListener('click', closeMessagePopup);
+    popup.append(closeButton, eyebrow, h2, pMsg, meta, returnButton);
+    backdrop.appendChild(popup);
+    document.body.appendChild(backdrop);
+
+    function close() {
+      closeMessagePopup();
+    }
+
+    closeButton.addEventListener('click', close);
+    returnButton.addEventListener('click', close);
+
+    backdrop.addEventListener('click', (event) => {
+      if (event.target === backdrop) close();
+    });
+
+    document.addEventListener('keydown', handleModalKeydown);
+
+    closeButton.focus();
   };
 
+  function handleModalKeydown(event) {
+    if (event.key === 'Escape') {
+      closeMessagePopup();
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      const backdrop = document.querySelector('.modal-backdrop');
+      if (!backdrop) return;
+      const focusable = backdrop.querySelectorAll('button');
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  }
+
   function closeMessagePopup() {
-    const popup = document.querySelector('.message-popup');
-    if (popup) popup.remove();
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) backdrop.remove();
+    document.removeEventListener('keydown', handleModalKeydown);
+    if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+      lastFocusedElement.focus();
+    }
   }
 
   const oceanVideo = document.querySelector('.ocean-video');
@@ -320,6 +516,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.OceanCache) {
           window.OceanCache.fetchFresh(100).then(function (list) {
             window.OceanBottles.renderMessages(list);
+            setOceanStatus(list && list.length ? 'hidden' : 'empty');
           });
           return;
         }
@@ -331,42 +528,104 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     { passive: true }
   );
-});
+  /* ---------------------------------------------------------
+     Generic overlay system (About / Collaborate / Composer)
+     --------------------------------------------------------- */
 
-// ocean.js (about/collab section)
-document.addEventListener('DOMContentLoaded', () => {
-  const aboutButton = document.getElementById('about-button');
-  const collabButton = document.getElementById('collab-button');
-  const aboutSection = document.getElementById('about-section');
-  const collabSection = document.getElementById('collab-section');
-  const closeButtons = document.querySelectorAll('.close-section');
-  if (!aboutButton || !collabButton) return;
+  let activeOverlay = null;
+  let overlayLastFocused = null;
 
-  function hideAllSections() {
-    aboutSection.style.display = 'none';
-    collabSection.style.display = 'none';
+  function getFocusable(container) {
+    return Array.from(
+      container.querySelectorAll(
+        'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+      )
+    ).filter((el) => !el.disabled && el.offsetParent !== null);
   }
 
-  aboutButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    hideAllSections();
-    aboutSection.style.display = 'block';
-    aboutSection.scrollIntoView({ behavior: 'smooth' });
-  });
+  function handleOverlayKeydown(event) {
+    if (!activeOverlay) return;
 
-  collabButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    hideAllSections();
-    collabSection.style.display = 'block';
-    collabSection.scrollIntoView({ behavior: 'smooth' });
-  });
+    if (event.key === 'Escape') {
+      closeOverlay();
+      return;
+    }
 
-  closeButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const sectionId = button.dataset.section;
-      const section = document.getElementById(sectionId);
-      if (section) section.style.display = 'none';
+    if (event.key === 'Tab') {
+      const focusable = getFocusable(activeOverlay);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  }
+
+  function openOverlay(overlayId, focusTarget) {
+    const overlay = document.getElementById(overlayId);
+    if (!overlay) return;
+
+    if (activeOverlay && activeOverlay !== overlay) {
+      activeOverlay.hidden = true;
+    }
+
+    overlayLastFocused = document.activeElement;
+    overlay.hidden = false;
+    activeOverlay = overlay;
+
+    document.addEventListener('keydown', handleOverlayKeydown);
+
+    const target = focusTarget || overlay.querySelector('.close-button') || getFocusable(overlay)[0];
+    if (target) target.focus();
+  }
+
+  function closeOverlay() {
+    if (!activeOverlay) return;
+    activeOverlay.hidden = true;
+    activeOverlay = null;
+    document.removeEventListener('keydown', handleOverlayKeydown);
+    if (overlayLastFocused && typeof overlayLastFocused.focus === 'function') {
+      overlayLastFocused.focus();
+    }
+  }
+
+  document.querySelectorAll('.modal-backdrop[id]').forEach((backdrop) => {
+    backdrop.addEventListener('click', (event) => {
+      if (event.target === backdrop) closeOverlay();
     });
   });
-});
 
+  document.querySelectorAll('.overlay-close').forEach((button) => {
+    button.addEventListener('click', closeOverlay);
+  });
+
+  const aboutButton = document.getElementById('about-button');
+  const collabButton = document.getElementById('collab-button');
+  const composeTrigger = document.getElementById('compose-trigger');
+
+  if (aboutButton) {
+    aboutButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      openOverlay('about-overlay');
+    });
+  }
+
+  if (collabButton) {
+    collabButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      openOverlay('collab-overlay');
+    });
+  }
+
+  if (composeTrigger) {
+    composeTrigger.addEventListener('click', () => {
+      openOverlay('composer-overlay', messageTitle);
+    });
+  }
+});

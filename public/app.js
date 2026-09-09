@@ -212,14 +212,37 @@
     openAdminPasswordModal(textId);
   }
 
+  let toastTimer = null;
+
+  function showToast(message) {
+    const toast = document.getElementById("toast");
+    if (!toast) return;
+
+    toast.textContent = message;
+    toast.hidden = false;
+    // Force reflow so the transition re-triggers on rapid consecutive calls.
+    void toast.offsetWidth;
+    toast.classList.add("toast--visible");
+
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.classList.remove("toast--visible");
+      setTimeout(() => {
+        toast.hidden = true;
+      }, 250);
+    }, 2000);
+  }
+
   async function copyText(textId) {
     try {
       const response = await fetch(`/api/texts/${textId}`);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const text = await response.json();
       copyFormattedText(text.content);
+      showToast("Message copied!");
     } catch (error) {
       console.error("Error copying text:", error);
+      showToast("Couldn't copy message.");
     }
   }
 

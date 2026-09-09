@@ -2,77 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Throw message bottles into a virtual ocean.">
-    <title>ocean</title>
+    <meta name="theme-color" content="#030f18">
+    <title>Message Ocean</title>
     <link rel="preconnect" href="https://cdn.pixabay.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="dns-prefetch" href="https://flagcdn.com">
     <link rel="stylesheet" href="ocean.css">
-    <link rel="preload" href="bottle_1_no_bg.png" as="image">
     <script src="ocean-cache.js"></script>
 </head>
 <body>
-    <nav>
-        <div class="nav-title">Bottle Message</div>
-        <div>
-            <a href="#about-button" id="about-button">About </a>
-            <a href="#collab-button" id="collab-button">Collab</a>
-        </div>
-    </nav>
-    <section id="about-section" class="hidden-section">
-        <h2>The Ocean of Unspoken Thoughts</h2>
-    
-        <p>Imagine a vast, silent ocean, not of water, but of thoughts. An ocean where every ripple is an idea, every current a belief, and every depth a hidden experience. This is the Virtual Ocean, a place born from a simple question: <br> <u>**What if the internet could be more than just fleeting posts and endless feeds?**</u></p>
-    
-        <p>My journey began with a deep curiosity about the human mind. I wanted to create a space where the unspoken could be spoken, where the unconventional could find a home, and where the raw essence of thought could drift freely. I yearned to understand— <br> <u>**what do people truly think, beyond the curated personas and polished opinions?**</u> </p>
-    
-        <p>And so, the Virtual Ocean was born. A place where you can: </p>
-    
-        <ul>
-            <li><strong>Set adrift your ideologies:</strong> Share the beliefs that shape your world, the philosophies that guide your path.</li>
-            <li><strong>Explore uncharted ways of thinking:</strong> Delve into the cognitive landscapes that others have mapped, and share your own unique perspectives.</li>
-            <li><strong>Unleash the thoughts that dare to go beyond:</strong> Share the ideas that break the mold, the "what ifs" that challenge the status quo.</li>
-            <li><strong>Share the raw experiences that have shaped you:</strong> Every story, every lesson, every moment of epiphany finds a home here.</li>
-            <li><strong>Reflect on the tapestry of internet thought:</strong> Contribute to a living archive of the digital age, a snapshot of our collective consciousness.</li>
-        </ul>
-    
-        <p>My motive was simple: to create a space for genuine connection and unfiltered expression. In a world saturated with noise, I sought to build a sanctuary of silence, where the whispers of the mind could be heard.</p>
-    
-        <p>But is this idea truly unique? I invite you to explore the vast expanse of the internet. **Go, research, and discover if this ocean of thoughts already exists.** If it does, how many others have dared to build such a space? And if not, then let us together make this a reality.</p>
-    
-        <p>Join me in this grand experiment. Share your message in a bottle, and let it drift into the depths of the Virtual Ocean. Let's see what thoughts wash ashore.</p>
-    
-        <button class="close-section" data-section="about-section">Close</button>
-    </section>
 
-    <section id="collab-section" class="hidden-section">
-        <h2>Collaboration Opportunities</h2>
-        <p>I am always excited to explore collaboration opportunities with fellow developers, artists, and creative minds. If you have an idea that aligns with the spirit of the Virtual Ocean, I would love to hear from you.</p>
-        <p>Whether it's integrating new features, designing unique bottle styles, or creating interactive elements for the ocean environment, I believe that collaboration can lead to amazing results.</p>
-        <p>I am particularly interested in collaborations that enhance the user experience, promote community engagement, and bring innovative ideas to life. If you are passionate about creating meaningful digital experiences, let's connect!</p>
-        <p>To discuss potential collaborations, please reach out to me at <a href="">LinkedIn</a>. I look forward to exploring the possibilities together and making the Virtual Ocean even more vibrant and engaging.</p>
-        <button class="close-section" data-section="collab-section">Close</button>
-    </section>
-
-    <div id="input-area">
-        <input type="text" id="message-title" placeholder="Enter title..." maxlength="10">
-        <input type="text" id="message-input" placeholder="Enter your message..." maxlength="500">
-        <button type="submit" id="throw-button">Throw</button>
-    </div>
-    <audio id="ocean-sound" src="fish.mp3" loop preload="none"></audio>
+    <!-- Full-screen ocean, fixed behind everything else -->
     <div class="app">
         <div class="scene-container">
-            <div class="sky" style="display: none;"></div>
             <div id="pond">
-                <video class="ocean-video" autoplay loop muted playsinline preload="metadata" poster="bottle_1_no_bg.png">
-                    <source src="https://cdn.pixabay.com/video/2023/05/06/161880-824623405_large.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                <div class="horizon-scene" aria-hidden="true">
+                    <div class="horizon-cloud horizon-cloud--1"></div>
+                    <div class="horizon-cloud horizon-cloud--2"></div>
+                    <div class="horizon-cloud horizon-cloud--3"></div>
+                    <div class="horizon-sun"></div>
+                    <div class="island">
+                        <div class="island-mound"></div>
+                        <div class="palm">
+                            <div class="palm-trunk"></div>
+                            <div class="palm-leaves">
+                                <span class="palm-leaf palm-leaf--1"></span>
+                                <span class="palm-leaf palm-leaf--2"></span>
+                                <span class="palm-leaf palm-leaf--3"></span>
+                                <span class="palm-leaf palm-leaf--4"></span>
+                                <span class="palm-leaf palm-leaf--5"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="horizon-line"></div>
+                </div>
                 <div class="ocean">
+                    <video class="ocean-video" autoplay loop muted playsinline preload="metadata" poster="bottle_1_no_bg.png">
+                        <source src="https://cdn.pixabay.com/video/2023/05/06/161880-824623405_large.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
                     <div class="ocean-floor">
                         <div class="ocean-floor-contents"></div>
                         <div class="diver">
-                            <div class="happy-birthday"><h5>Click on Bottle</h5></div>
+                            <div class="diver-note">
+                                <h5>Click a bottle</h5>
+                                <span>to discover a thought</span>
+                            </div>
                             <div class="diver-head">
                                 <div class="diver-mask">
                                     <div class="eyes">
@@ -126,8 +103,111 @@
                     <div class="bubble bubble--12"></div>
                 </div>
                 <div id="bottles-layer" class="bottles-layer" aria-live="polite"></div>
-            </div>  </div> 
+
+                <div id="ocean-status" class="ocean-status" hidden>
+                    <span class="ocean-status__icon" aria-hidden="true">&#127754;</span>
+                    <p class="ocean-status__title" id="ocean-status-title">Listening to the ocean&hellip;</p>
+                    <p id="ocean-status-body"></p>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Floating chrome, overlaid on top of the full-screen ocean -->
+    <nav>
+        <div class="nav-title">Message Ocean</div>
+        <div class="nav-actions">
+            <a href="#about" id="about-button">About</a>
+            <a href="#collaborate" id="collab-button">Collaborate</a>
+            <button type="button" id="refresh-button" class="icon-button" aria-label="Refresh the ocean and show new bottles" title="Refresh">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M20 11A8 8 0 1 0 18.5 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M20 5v6h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <div class="ocean-hero" aria-hidden="true">
+        <p class="ocean-hero__eyebrow">Message in a bottle</p>
+        <p class="ocean-hero__title">Release a thought into the ocean.<span>You never know who might find it.</span></p>
+    </div>
+
+    <button type="button" id="compose-trigger" class="compose-trigger">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M10 3h4v3.2c0 .5.2 1 .6 1.4l1.8 1.8c.4.4.6.9.6 1.4V19a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10.8c0-.5.2-1 .6-1.4l1.8-1.8c.4-.4.6-.9.6-1.4V3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M9 3h6M8 13.5c1 .8 2 .8 3 0s2-.8 3 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        Send a Message
+    </button>
+
+    <!-- Composer overlay -->
+    <div class="modal-backdrop" id="composer-overlay" hidden>
+        <div class="message-popup" role="dialog" aria-modal="true" aria-labelledby="composer-heading">
+            <button type="button" class="close-button overlay-close" aria-label="Close">&times;</button>
+            <p class="popup-eyebrow">Message in a bottle</p>
+            <h2 id="composer-heading">Send a Message</h2>
+
+            <div id="input-area">
+                <div class="composer-field">
+                    <label class="composer-label" for="message-title">Message title</label>
+                    <input type="text" id="message-title" placeholder="Give it a short title" maxlength="10">
+                </div>
+                <div class="composer-field">
+                    <label class="composer-label" for="message-input">Your message</label>
+                    <input type="text" id="message-input" placeholder="Write something you'd like to release..." maxlength="500">
+                </div>
+                <div class="composer-actions">
+                    <button type="button" id="throw-button">
+                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M10 3h4v3.2c0 .5.2 1 .6 1.4l1.8 1.8c.4.4.6.9.6 1.4V19a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10.8c0-.5.2-1 .6-1.4l1.8-1.8c.4-.4.6-.9.6-1.4V3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                            <path d="M9 3h6M8 13.5c1 .8 2 .8 3 0s2-.8 3 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                        </svg>
+                        Release into the ocean
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- About overlay -->
+    <div class="modal-backdrop" id="about-overlay" hidden>
+        <div class="message-popup message-popup--wide hidden-section" id="about-section" role="dialog" aria-modal="true" aria-labelledby="about-heading">
+            <button type="button" class="close-button overlay-close" aria-label="Close about panel">&times;</button>
+            <p class="section-eyebrow">About the ocean</p>
+            <h2 id="about-heading">Every bottle carries a thought</h2>
+
+            <p>This is a place where people can release ideas, experiences, questions and thoughts into a shared digital ocean &mdash; and, in turn, stumble on something a stranger has set adrift.</p>
+
+            <p>It began with a simple question: what if the internet could hold something quieter than a feed? A space where the unspoken could be spoken, without a name attached to it, without an audience watching. So the ocean was built &mdash; a place to set adrift a belief, an unconventional idea, or a raw experience, and to read what others have released in return.</p>
+
+            <h3>How it works</h3>
+            <div class="how-it-works">
+                <div class="how-step"><em>01</em><span>Write a thought</span></div>
+                <div class="how-step"><em>02</em><span>Release your bottle</span></div>
+                <div class="how-step"><em>03</em><span>Watch it drift</span></div>
+                <div class="how-step"><em>04</em><span>Discover someone else's message</span></div>
+            </div>
+
+            <p>If an ocean of thoughts like this already exists elsewhere, I'd love to hear about it. If not, consider this an invitation to help build it further &mdash; share your own message in a bottle, and see what washes ashore.</p>
+        </div>
+    </div>
+
+    <!-- Collaborate overlay -->
+    <div class="modal-backdrop" id="collab-overlay" hidden>
+        <div class="message-popup message-popup--wide hidden-section" id="collab-section" role="dialog" aria-modal="true" aria-labelledby="collab-heading">
+            <button type="button" class="close-button overlay-close" aria-label="Close collaborate panel">&times;</button>
+            <p class="section-eyebrow">Build the ocean</p>
+            <h2 id="collab-heading">Collaboration opportunities</h2>
+            <p>Developers, designers, artists and curious minds are welcome to contribute &mdash; whether that means new features, new bottle styles, or new ways to make this underwater world feel alive.</p>
+            <p>I'm especially interested in collaborations that improve the experience, encourage genuine engagement, and bring thoughtful ideas to life. If that sounds like you, let's talk.</p>
+            <a class="cta-button" href="">Get in touch</a>
+        </div>
+    </div>
+
+    <audio id="ocean-sound" src="fish.mp3" loop preload="none"></audio>
+
+    <div class="toast-stack" id="toast-stack" aria-live="polite" aria-atomic="true"></div>
 
 <script src="ocean-bottles.js" defer></script>
 <script src="ocean.js" defer></script>

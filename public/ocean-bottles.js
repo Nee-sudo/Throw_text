@@ -7,12 +7,17 @@
   const BOTTLE_W = 50;
   const BOTTLE_H = 80;
 
+  // Share of the pond's height given to the sky/horizon band (see .horizon-scene
+  // in ocean.css). Bottles are only ever placed below this line, in the water.
+  const HORIZON_RATIO = 0.32;
+
   const messageStore = new Map();
   const spatialBuckets = new Map();
   let layer = null;
   let host = null;
   let pondWidth = 0;
   let pondHeight = 0;
+  let waterTop = 0;
   let layout = null;
 
   function isMobileView() {
@@ -42,6 +47,7 @@
     pondWidth = rect.width;
     pondHeight = rect.height;
     layout = getLayout();
+    waterTop = pondHeight * HORIZON_RATIO;
     return { w: pondWidth, h: pondHeight };
   }
 
@@ -125,11 +131,12 @@
     if (!layout) layout = getLayout();
 
     const maxX = Math.max(pondWidth - layout.bottleW, 0);
-    const maxY = Math.max(pondHeight - layout.bottleH, 0);
+    const minY = waterTop;
+    const maxY = Math.max(pondHeight - layout.bottleH, minY);
 
     for (let attempt = 0; attempt < layout.maxRandomAttempts; attempt += 1) {
       const x = Math.random() * maxX;
-      const y = Math.random() * maxY;
+      const y = minY + Math.random() * (maxY - minY);
       if (!hasOverlapAt(x, y)) return commitPosition(x, y);
     }
 
@@ -141,8 +148,9 @@
     const stepX = layout.bottleW + pad * 1.6;
     const stepY = layout.bottleH + layout.floatMargin + pad * 1.4;
     const candidates = [];
+    const yStart = waterTop + pad;
 
-    for (let y = pad; y <= pondHeight - layout.bottleH - pad; y += stepY) {
+    for (let y = yStart; y <= pondHeight - layout.bottleH - pad; y += stepY) {
       for (let x = pad; x <= pondWidth - layout.bottleW - pad; x += stepX) {
         candidates.push({
           x: x + Math.random() * Math.min(pad, 10),
@@ -161,8 +169,9 @@
     const inset = layout.mobile ? 8 : 4;
     const fineStepX = layout.mobile ? 28 : 36;
     const fineStepY = layout.mobile ? 40 : 48;
+    const fineYStart = Math.max(inset, waterTop + inset);
 
-    for (let y = inset; y <= pondHeight - layout.bottleH - inset; y += fineStepY) {
+    for (let y = fineYStart; y <= pondHeight - layout.bottleH - inset; y += fineStepY) {
       for (let x = inset; x <= pondWidth - layout.bottleW - inset; x += fineStepX) {
         if (!hasOverlapAt(x, y)) return commitPosition(x, y);
       }
@@ -171,41 +180,135 @@
     return null;
   }
 
+  // A small set of ocean-glass hue shifts so bottles read as varied without
+  // needing separate image assets. Deterministic per message id so a given
+  // bottle always renders the same way across reloads.
+  const BOTTLE_HUES = [0, -18, 24, -34, 42, -8];
+
+  function pickBottleHue(id) {
+    let hash = 0;
+    for (let i = 0; i < id.length; i += 1) {
+      hash = (hash * 31 + id.charCodeAt(i)) | 0;
+    }
+    const index = Math.abs(hash) % BOTTLE_HUES.length;
+    return BOTTLE_HUES[index];
+  }
+
+  function randomBetween(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function lerp(min, max, t) {
+    return min + (max - min) * t;
+  }
+
+  function applyFloatingPhysics(bottle, depth) {
+    // Randomized-but-bounded timing/amplitude per bottle so a cluster of
+    // bottles bobs and rocks out of sync, like real bottles on real waves,
+    // instead of moving in perfect unison. Bottles further from the viewer
+    // (lower depth) bob with a smaller amplitude, matching how distant
+    // motion reads as smaller/slower to the eye.
+    const motionScale = lerp(0.5, 1, depth);
+    const floatDur = randomBetween(3.6, 5.8).toFixed(2);
+    const floatAmp = (randomBetween(7, 14) * motionScale).toFixed(1);
+    const floatDelay = randomBetween(0, 3).toFixed(2);
+    const waveDur = randomBetween(1.6, 3.2).toFixed(2);
+    const waveAmp = (randomBetween(1.4, 3.2) * motionScale).toFixed(2);
+    const waveDelay = randomBetween(0, 2).toFixed(2);
+
+    bottle.style.setProperty("--float-dur", `${floatDur}s`);
+    bottle.style.setProperty("--float-amp", `${floatAmp}px`);
+    bottle.style.setProperty("--float-delay", `${floatDelay}s`);
+    bottle.style.setProperty("--wave-dur", `${waveDur}s`);
+    bottle.style.setProperty("--wave-amp", `${waveAmp}deg`);
+    bottle.style.setProperty("--wave-delay", `${waveDelay}s`);
+  }
+
+  function applyDepth(bottle, y) {
+    // 0 = right at the horizon (far away), 1 = bottom of the water (closest
+    // to the viewer). Drives scale/opacity/blur/saturation so distant
+    // bottles read as smaller and hazier, like real atmospheric perspective.
+    const range = Math.max(pondHeight - layout.bottleH - waterTop, 1);
+    const depth = Math.min(1, Math.max(0, (y - waterTop) / range));
+
+    bottle.style.setProperty("--depth-scale", lerp(0.52, 1.15, depth).toFixed(3));
+    bottle.style.setProperty("--depth-opacity", lerp(0.5, 1, depth).toFixed(3));
+    bottle.style.setProperty("--depth-saturate", lerp(0.55, 1.05, depth).toFixed(3));
+    bottle.style.setProperty("--depth-brightness", lerp(0.82, 1.05, depth).toFixed(3));
+    bottle.style.setProperty("--depth-blur", lerp(1.4, 0, depth).toFixed(2) + "px");
+    // The label stays legible even far away: only a mild fade, no shrinking
+    // or blurring, so a bottle's title/flag can always be read at a glance.
+    bottle.style.setProperty("--label-opacity", lerp(0.88, 1, depth).toFixed(3));
+    bottle.dataset.depth = depth.toFixed(2);
+
+    return depth;
+  }
+
   function buildBottle(msg, index) {
     const id = String(msg._id || `local-${index}-${msg.createdAt || Date.now()}`);
     messageStore.set(id, {
       title: msg.title || "",
       message: msg.message || "",
       createdAt: msg.createdAt,
+      country: msg.country || "",
     });
-
-    const bottle = document.createElement("div");
-    bottle.className = "bottle";
-    bottle.dataset.bid = id;
 
     const pos = randomPosition();
     if (!pos) return null;
 
+    const bottle = document.createElement("div");
+    bottle.className = "bottle";
+    bottle.dataset.bid = id;
+    bottle.tabIndex = 0;
+    bottle.setAttribute("role", "button");
+    bottle.setAttribute("aria-label", msg.title ? `Read message: ${msg.title}` : "Read message");
     bottle.style.left = `${pos.x}px`;
     bottle.style.top = `${pos.y}px`;
+    bottle.style.setProperty("--bottle-hue", `${pickBottleHue(id)}deg`);
 
-    const floatDelay = (Math.random() * 3).toFixed(2);
-    const waveDelay = (Math.random() * 2).toFixed(2);
-    bottle.style.animationDelay = `${floatDelay}s, ${waveDelay}s`;
+    const depth = applyDepth(bottle, pos.y);
+    applyFloatingPhysics(bottle, depth);
+
+    const inner = document.createElement("div");
+    inner.className = "bottle-inner";
+
+    const cork = document.createElement("span");
+    cork.className = "bottle-cork";
+
+    const neck = document.createElement("span");
+    neck.className = "bottle-neck";
+
+    const glass = document.createElement("span");
+    glass.className = "bottle-glass";
+
+    const note = document.createElement("span");
+    note.className = "bottle-note";
+    glass.appendChild(note);
+
+    const shine = document.createElement("span");
+    shine.className = "bottle-shine";
+    glass.appendChild(shine);
 
     const titleSpan = document.createElement("span");
-    titleSpan.textContent = msg.title || "";
-    bottle.appendChild(titleSpan);
+    titleSpan.className = "bottle-label";
 
     if (msg.country) {
       const flagImg = document.createElement("img");
-      flagImg.className = "flag";
+      flagImg.className = "bottle-flag";
       flagImg.alt = "";
       flagImg.loading = "lazy";
       flagImg.decoding = "async";
-      flagImg.src = `https://flagcdn.com/20x15/${String(msg.country).toLowerCase()}.png`;
-      bottle.appendChild(flagImg);
+      flagImg.src = `https://flagcdn.com/24x18/${String(msg.country).toLowerCase()}.png`;
+      titleSpan.appendChild(flagImg);
     }
+
+    const titleText = document.createElement("span");
+    titleText.className = "bottle-label-text";
+    titleText.textContent = msg.title || "Untitled";
+    titleSpan.appendChild(titleText);
+
+    inner.append(cork, neck, glass);
+    bottle.append(inner, titleSpan);
 
     return bottle;
   }
@@ -258,16 +361,27 @@
     requestAnimationFrame(renderChunk);
   }
 
-  function handleBottleClick(event) {
-    const bottle = event.target.closest(".bottle");
-    if (!bottle || !layer || !layer.contains(bottle)) return;
-
+  function openBottle(bottle) {
     const data = messageStore.get(bottle.dataset.bid);
     if (!data) return;
 
     if (typeof global.showMessagePopup === "function") {
-      global.showMessagePopup(data.title, data.message, data.createdAt);
+      global.showMessagePopup(data.title, data.message, data.createdAt, data.country);
     }
+  }
+
+  function handleBottleClick(event) {
+    const bottle = event.target.closest(".bottle");
+    if (!bottle || !layer || !layer.contains(bottle)) return;
+    openBottle(bottle);
+  }
+
+  function handleBottleKeydown(event) {
+    if (event.key !== "Enter" && event.key !== " " && event.key !== "Spacebar") return;
+    const bottle = event.target.closest(".bottle");
+    if (!bottle || !layer || !layer.contains(bottle)) return;
+    event.preventDefault();
+    openBottle(bottle);
   }
 
   function init(options) {
@@ -286,6 +400,7 @@
 
     if (host && layer) {
       host.addEventListener("click", handleBottleClick);
+      host.addEventListener("keydown", handleBottleKeydown);
     }
 
     layout = getLayout();
