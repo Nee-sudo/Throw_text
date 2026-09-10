@@ -8,6 +8,47 @@ document.addEventListener('DOMContentLoaded', function() {
   const statusTitleEl = document.getElementById('ocean-status-title');
   const statusBodyEl = document.getElementById('ocean-status-body');
   const refreshButton = document.getElementById('refresh-button');
+  const themeToggle = document.getElementById('theme-toggle');
+
+  /* ---------------------------------------------------------
+     Day / night toggle
+     --------------------------------------------------------- */
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    if (themeToggle) {
+      const isNight = theme === 'night';
+      themeToggle.setAttribute('aria-pressed', String(isNight));
+      themeToggle.setAttribute(
+        'aria-label',
+        isNight ? 'Switch to day mode' : 'Switch to night mode'
+      );
+    }
+  }
+
+  (function initTheme() {
+    let saved = null;
+    try {
+      saved = window.localStorage.getItem('oceanTheme');
+    } catch (err) {
+      saved = null;
+    }
+    applyTheme(saved === 'night' ? 'night' : 'day');
+  })();
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function () {
+      const isNight = document.documentElement.getAttribute('data-theme') === 'night';
+      const next = isNight ? 'day' : 'night';
+      applyTheme(next);
+      try {
+        window.localStorage.setItem('oceanTheme', next);
+      } catch (err) {
+        /* localStorage unavailable (private browsing, etc.) — theme still
+           applies for this session, it just won't persist. */
+      }
+    });
+  }
 
   if (window.OceanBottles && pond) {
     window.OceanBottles.init({ host: pond });

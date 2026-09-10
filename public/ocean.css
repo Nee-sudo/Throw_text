@@ -47,6 +47,31 @@
 
   --font: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* ---------- Day / night theme tokens ---------- */
+  --sky-top: var(--ocean-900);
+  --sky-mid: var(--ocean-700);
+  --sky-glow-1: #c97a52;
+  --sky-glow-2: #ffc98a;
+  --celestial-body: radial-gradient(circle at 35% 30%, #fff3d0 0%, #ffdf9b 45%, #ffb347 100%);
+  --celestial-glow: 0 0 30px 10px rgba(255, 200, 120, 0.55), 0 0 70px 30px rgba(255, 170, 90, 0.3);
+  --celestial-shade-opacity: 0;
+  --reflection-strong: rgba(255, 205, 130, 0.55);
+  --reflection-soft: rgba(255, 205, 130, 0.16);
+  --star-opacity: 0;
+}
+
+[data-theme="night"] {
+  --sky-top: #01060c;
+  --sky-mid: #0a1f33;
+  --sky-glow-1: #17334c;
+  --sky-glow-2: #345d78;
+  --celestial-body: radial-gradient(circle at 32% 28%, #ffffff 0%, #dbe9f6 45%, #a7c2da 100%);
+  --celestial-glow: 0 0 24px 8px rgba(180, 210, 240, 0.5), 0 0 60px 26px rgba(120, 160, 210, 0.26);
+  --celestial-shade-opacity: 1;
+  --reflection-strong: rgba(196, 220, 245, 0.4);
+  --reflection-soft: rgba(196, 220, 245, 0.1);
+  --star-opacity: 1;
 }
 
 html,
@@ -107,6 +132,10 @@ nav {
   font-weight: 700;
   letter-spacing: 0.01em;
   white-space: nowrap;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nav-title::before {
@@ -119,6 +148,7 @@ nav {
   display: flex;
   align-items: center;
   gap: 4px;
+  flex: 0 0 auto;
 }
 
 .nav-actions a {
@@ -161,6 +191,32 @@ nav {
   height: 17px;
 }
 
+.theme-toggle {
+  position: relative;
+}
+.theme-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  transition: opacity 0.35s var(--ease-soft), transform 0.35s var(--ease-soft);
+}
+.theme-icon--sun {
+  opacity: 1;
+}
+.theme-icon--moon {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.5) rotate(-40deg);
+}
+[data-theme="night"] .theme-icon--sun {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.5) rotate(40deg);
+}
+[data-theme="night"] .theme-icon--moon {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1) rotate(0deg);
+}
+
 .icon-button:hover {
   color: var(--text-primary);
   background: rgba(255, 255, 255, 0.14);
@@ -200,6 +256,9 @@ button:focus-visible,
 }
 
 @media (max-width: 380px) {
+  .nav-actions {
+    gap: 2px;
+  }
   .nav-actions a {
     padding: 6px 8px;
     font-size: 0.78rem;
@@ -458,11 +517,40 @@ button:focus-visible,
   z-index: 1;
   background: linear-gradient(
     to bottom,
-    var(--ocean-900) 0%,
-    var(--ocean-700) 38%,
-    #c97a52 74%,
-    #ffc98a 100%
+    var(--sky-top) 0%,
+    var(--sky-mid) 38%,
+    var(--sky-glow-1) 74%,
+    var(--sky-glow-2) 100%
   );
+  transition: background 1.4s ease;
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+  opacity: var(--star-opacity, 0);
+  transition: opacity 1.4s ease;
+  background-repeat: no-repeat;
+  background-image:
+    radial-gradient(1.6px 1.6px at 10% 18%, #fff, transparent),
+    radial-gradient(1.1px 1.1px at 22% 32%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 38% 12%, #fff, transparent),
+    radial-gradient(1.1px 1.1px at 52% 28%, #fff, transparent),
+    radial-gradient(2px 2px at 8% 45%, #fff, transparent),
+    radial-gradient(1.1px 1.1px at 30% 48%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 88% 15%, #fff, transparent),
+    radial-gradient(1.1px 1.1px at 78% 30%, #fff, transparent),
+    radial-gradient(1.1px 1.1px at 15% 6%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 45% 5%, #fff, transparent),
+    radial-gradient(1.1px 1.1px at 60% 8%, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 5% 28%, #fff, transparent);
+  animation: star-twinkle 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: var(--star-opacity, 0); }
+  50% { opacity: calc(var(--star-opacity, 0) * 0.5); }
 }
 
 .horizon-sun {
@@ -472,12 +560,26 @@ button:focus-visible,
   width: 15%;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff3d0 0%, var(--aqua-bright) 0%, #ffdf9b 45%, #ffb347 100%);
-  box-shadow:
-    0 0 30px 10px rgba(255, 200, 120, 0.55),
-    0 0 70px 30px rgba(255, 170, 90, 0.3);
+  background: var(--celestial-body);
+  box-shadow: var(--celestial-glow);
   transform: translateX(-50%);
   animation: sun-glow 6s ease-in-out infinite;
+  transition: background 1.4s ease, box-shadow 1.4s ease;
+}
+
+/* Subtle crater/terminator shading — only visible once faded in at night,
+   so the same element reads as a sun by day and a moon after dark. */
+.horizon-sun::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  opacity: var(--celestial-shade-opacity, 0);
+  transition: opacity 1.4s ease;
+  background:
+    radial-gradient(circle at 72% 62%, rgba(120, 145, 175, 0.55) 0%, transparent 14%),
+    radial-gradient(circle at 40% 70%, rgba(120, 145, 175, 0.4) 0%, transparent 10%),
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0) 0%, rgba(140, 165, 195, 0.35) 75%, rgba(140, 165, 195, 0.5) 100%);
 }
 
 @keyframes sun-glow {
@@ -508,8 +610,9 @@ button:focus-visible,
   bottom: 0;
   width: 100%;
   height: 3px;
-  background: linear-gradient(90deg, transparent, rgba(255, 226, 170, 0.85), transparent);
-  box-shadow: 0 0 18px 4px rgba(255, 200, 130, 0.4);
+  background: linear-gradient(90deg, transparent, var(--reflection-strong), transparent);
+  box-shadow: 0 0 18px 4px var(--reflection-soft);
+  transition: background 1.4s ease, box-shadow 1.4s ease;
 }
 
 .island {
@@ -598,10 +701,11 @@ button:focus-visible,
   z-index: 2;
   background: linear-gradient(
     to bottom,
-    var(--ocean-700) 0%,
+    var(--sky-glow-1) 0%,
     var(--ocean-850) 42%,
     var(--ocean-950) 100%
   );
+  transition: background 1.4s ease;
 }
 
 @media (max-width: 640px) {
@@ -648,6 +752,49 @@ button:focus-visible,
   z-index: 1;
   opacity: 0.55;
   mix-blend-mode: screen;
+}
+
+/* Sun/moon reflection on the water — a tapered shimmering beam aligned
+   under the horizon-sun (left: 68%, matching its position exactly), sitting
+   below the bottles layer (z-index 10) so bottles stay clearly visible
+   on top of it rather than getting lost in the glare. */
+.horizon-reflection {
+  position: absolute;
+  top: 0;
+  left: 68%;
+  width: 22%;
+  height: 100%;
+  transform: translateX(-50%);
+  clip-path: polygon(42% 0%, 58% 0%, 100% 100%, 0% 100%);
+  background: linear-gradient(
+    to bottom,
+    var(--reflection-strong) 0%,
+    var(--reflection-soft) 45%,
+    transparent 85%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  filter: blur(1px);
+  z-index: 3;
+  pointer-events: none;
+  animation: reflection-shimmer 2.8s ease-in-out infinite;
+  transition: background 1.4s ease;
+}
+
+@keyframes reflection-shimmer {
+  0%, 100% { opacity: 0.6; filter: blur(1.2px) brightness(1); }
+  50% { opacity: 0.9; filter: blur(0.5px) brightness(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .horizon-reflection {
+    animation: none;
+    opacity: 0.75;
+  }
+}
+
+@media (max-width: 640px) {
+  .horizon-reflection { width: 30%; }
 }
 
 /* ocean floor */

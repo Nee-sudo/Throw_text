@@ -19,6 +19,7 @@
         <div class="scene-container">
             <div id="pond">
                 <div class="horizon-scene" aria-hidden="true">
+                    <div class="stars"></div>
                     <div class="horizon-cloud horizon-cloud--1"></div>
                     <div class="horizon-cloud horizon-cloud--2"></div>
                     <div class="horizon-cloud horizon-cloud--3"></div>
@@ -39,6 +40,7 @@
                     <div class="horizon-line"></div>
                 </div>
                 <div class="ocean">
+                    <div class="horizon-reflection" aria-hidden="true"></div>
                     <video class="ocean-video" autoplay loop muted playsinline preload="metadata" poster="bottle_1_no_bg.png">
                         <source src="https://cdn.pixabay.com/video/2023/05/06/161880-824623405_large.mp4" type="video/mp4">
                         Your browser does not support the video tag.
@@ -119,6 +121,15 @@
         <div class="nav-actions">
             <a href="#about" id="about-button">About</a>
             <a href="#collaborate" id="collab-button">Collaborate</a>
+            <button type="button" id="theme-toggle" class="icon-button theme-toggle" aria-label="Switch to night mode" aria-pressed="false" title="Day / Night">
+                <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.8 6.8 0 0 0 10.2 10.2Z" fill="currentColor"/>
+                </svg>
+            </button>
             <button type="button" id="refresh-button" class="icon-button" aria-label="Refresh the ocean and show new bottles" title="Refresh">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M20 11A8 8 0 1 0 18.5 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
