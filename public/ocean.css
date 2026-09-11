@@ -2401,35 +2401,6 @@ button:focus-visible,
   transform: translateY(0) scale(0.98);
 }
 
-/* ---------- Real footage for the horizon scene (day theme) ----------
-   A free, no-attribution-required Pixabay clip of a palm-tree sunset
-   island, used in place of the illustrated sky/sun/island for the day
-   theme. The night theme keeps the hand-drawn starry/moonlit scene from
-   before, since no equivalent free night-time island footage was
-   substituted in — better to keep a good illustrated night scene than
-   guess at footage that might not match. */
-.horizon-video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 58%;
-  z-index: 0;
-}
-
-[data-theme="night"] .horizon-video {
-  display: none;
-}
-
-.island,
-.horizon-sun,
-.horizon-cloud {
-  display: none;
-}
-
-[data-theme="night"] .island,
-[data-theme="night"] .horizon-sun,
-[data-theme="night"] .horizon-cloud {
-  display: block;
-}
+/* ---------- Sun and island are illustrated in both themes; only
+   their colors/glow change (see the theme tokens above and the
+   [data-theme="night"] overrides further down). ---------- */
