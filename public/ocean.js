@@ -425,6 +425,9 @@ document.addEventListener('DOMContentLoaded', function() {
   let lastFocusedElement = null;
 
   window.showMessagePopup = function showMessagePopup(title, message, createdAt, country) {
+    const existing = document.querySelector('.message-popup-backdrop');
+    if (existing) existing.remove();
+
     lastFocusedElement = document.activeElement;
 
     const formattedDate = new Date(createdAt).toLocaleDateString('en-US', {
@@ -439,23 +442,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     const backdrop = document.createElement('div');
-    backdrop.className = 'modal-backdrop';
+    backdrop.className = 'modal-backdrop message-popup-backdrop';
 
     const popup = document.createElement('div');
-    popup.classList.add('message-popup');
+    popup.classList.add('message-popup', 'letter-card', 'letter-read');
     popup.setAttribute('role', 'dialog');
     popup.setAttribute('aria-modal', 'true');
     popup.setAttribute('aria-labelledby', 'message-popup-title');
 
     const closeButton = document.createElement('button');
-    closeButton.className = 'close-button';
+    closeButton.className = 'close-button letter-close';
     closeButton.type = 'button';
     closeButton.setAttribute('aria-label', 'Return to ocean');
-    closeButton.textContent = '\u2715';
+    closeButton.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
 
-    const eyebrow = document.createElement('p');
-    eyebrow.className = 'popup-eyebrow';
-    eyebrow.textContent = 'Message found';
+    const badge = document.createElement('span');
+    badge.className = 'letter-badge';
+    badge.setAttribute('aria-hidden', 'true');
+    badge.textContent = '\uD83C\uDF0A';
 
     const h2 = document.createElement('h2');
     h2.id = 'message-popup-title';
@@ -479,11 +484,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const returnButton = document.createElement('button');
-    returnButton.className = 'return-button';
+    returnButton.className = 'return-button letter-return';
     returnButton.type = 'button';
-    returnButton.textContent = 'Return to Ocean';
+    returnButton.setAttribute('aria-label', 'Return to ocean');
+    returnButton.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-    popup.append(closeButton, eyebrow, h2, pMsg, meta, returnButton);
+    popup.append(closeButton, badge, h2, pMsg, meta, returnButton);
     backdrop.appendChild(popup);
     document.body.appendChild(backdrop);
 
@@ -510,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     if (event.key === 'Tab') {
-      const backdrop = document.querySelector('.modal-backdrop');
+      const backdrop = document.querySelector('.message-popup-backdrop');
       if (!backdrop) return;
       const focusable = backdrop.querySelectorAll('button');
       if (!focusable.length) return;
@@ -528,7 +535,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function closeMessagePopup() {
-    const backdrop = document.querySelector('.modal-backdrop');
+    const backdrop = document.querySelector('.message-popup-backdrop');
     if (backdrop) backdrop.remove();
     document.removeEventListener('keydown', handleModalKeydown);
     if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {

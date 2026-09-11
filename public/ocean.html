@@ -19,28 +19,93 @@
         <div class="scene-container">
             <div id="pond">
                 <div class="horizon-scene" aria-hidden="true">
+                    <video class="horizon-video" autoplay loop muted playsinline preload="metadata" poster="https://cdn.pixabay.com/video/2023/02/01/148920-794951704_tiny.jpg">
+                        <source src="https://cdn.pixabay.com/video/2023/02/01/148920-794951704_large.mp4" type="video/mp4">
+                    </video>
                     <div class="stars"></div>
                     <div class="horizon-cloud horizon-cloud--1"></div>
                     <div class="horizon-cloud horizon-cloud--2"></div>
                     <div class="horizon-cloud horizon-cloud--3"></div>
                     <div class="horizon-sun"></div>
                     <div class="island">
-                        <div class="island-mound"></div>
-                        <div class="palm">
-                            <div class="palm-trunk"></div>
-                            <div class="palm-leaves">
-                                <span class="palm-leaf palm-leaf--1"></span>
-                                <span class="palm-leaf palm-leaf--2"></span>
-                                <span class="palm-leaf palm-leaf--3"></span>
-                                <span class="palm-leaf palm-leaf--4"></span>
-                                <span class="palm-leaf palm-leaf--5"></span>
-                            </div>
-                        </div>
+                        <svg class="island-svg" viewBox="0 0 420 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet" role="img" aria-label="A small tropical island with palm trees, warmly lit by the setting sun">
+                            <defs>
+                                <linearGradient id="sandGradient" x1="0" y1="0" x2="1" y2="0.3">
+                                    <stop offset="0%" stop-color="#c9a15f"/>
+                                    <stop offset="55%" stop-color="#eccb87"/>
+                                    <stop offset="100%" stop-color="#fbe6ad"/>
+                                </linearGradient>
+                                <linearGradient id="rockGradient" x1="0" y1="0" x2="1" y2="0.2">
+                                    <stop offset="0%" stop-color="#312a30"/>
+                                    <stop offset="55%" stop-color="#544b52"/>
+                                    <stop offset="100%" stop-color="#8b7168"/>
+                                </linearGradient>
+                                <linearGradient id="frondGradient" x1="0" y1="0" x2="1" y2="0.15">
+                                    <stop offset="0%" stop-color="#173a22"/>
+                                    <stop offset="50%" stop-color="#356b3a"/>
+                                    <stop offset="100%" stop-color="#8fb35a"/>
+                                </linearGradient>
+                                <linearGradient id="trunkGradient" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stop-color="#3a2414"/>
+                                    <stop offset="60%" stop-color="#5c3a1f"/>
+                                    <stop offset="100%" stop-color="#8a6236"/>
+                                </linearGradient>
+                            </defs>
+                            <g fill="url(#sandGradient)">
+                                <path class="island-sand" d="M20,168 C 50,150 95,142 150,140 C 210,138 260,142 300,146 C 340,149 375,155 400,168 L400,180 L20,180 Z"/>
+                            </g>
+                            <g fill="url(#rockGradient)">
+                                <path class="island-rock" d="M372,168 C 368,150 366,128 374,108 C 379,96 388,96 393,109 C 399,128 398,150 396,168 Z"/>
+                                <path class="island-rock" d="M255,168 C 250,148 258,128 278,120 C 296,113 316,120 322,138 C 327,152 322,163 312,168 Z"/>
+                                <path class="island-rock island-rock--small" d="M305,168 C 302,155 310,144 324,142 C 336,141 344,150 342,161 C 340,166 335,168 330,168 Z"/>
+                            </g>
+                            <g fill="url(#frondGradient)" stroke="none">
+                                <g transform="translate(139.9,90.9)"><g class="palm-sway" style="--sway-delay:0.0s">
+                                    <path class="island-frond" transform="rotate(-74)" d="M0,0 C 8.5,-8.0 21.3,-8.1 30.5,0 C 21.3,4.7 8.5,5.4 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(-44)" d="M0,0 C 10.3,-8.0 25.7,-8.1 36.8,0 C 25.7,4.7 10.3,5.4 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(-16)" d="M0,0 C 11.8,-8.0 29.4,-8.1 42.0,0 C 29.4,4.7 11.8,5.4 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(12)" d="M0,0 C 12.3,-8.0 30.9,-8.1 44.1,0 C 30.9,4.7 12.3,5.4 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(40)" d="M0,0 C 10.9,-8.0 27.2,-8.1 38.9,0 C 27.2,4.7 10.9,5.4 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(68)" d="M0,0 C 9.4,-8.0 23.5,-8.1 33.6,0 C 23.5,4.7 9.4,5.4 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(94)" d="M0,0 C 7.4,-8.0 18.4,-8.1 26.2,0 C 18.4,4.7 7.4,5.4 0,0 Z"/>
+                                </g></g>
+                                <path class="island-trunk" fill="url(#trunkGradient)" d="M146.4,148.0 Q146.0,116.1 138.5,90.9 L141.4,90.9 Q149.5,116.1 153.6,148.0 Z"/>
+                                <g transform="translate(210.2,100.3)"><g class="palm-sway" style="--sway-delay:0.3s">
+                                    <path class="island-frond" transform="rotate(-74)" d="M0,0 C 6.9,-6.5 17.3,-6.5 24.6,0 C 17.3,3.8 6.9,4.3 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(-44)" d="M0,0 C 8.3,-6.5 20.8,-6.5 29.8,0 C 20.8,3.8 8.3,4.3 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(-16)" d="M0,0 C 9.5,-6.5 23.8,-6.5 34.0,0 C 23.8,3.8 9.5,4.3 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(12)" d="M0,0 C 10.0,-6.5 25.0,-6.5 35.7,0 C 25.0,3.8 10.0,4.3 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(40)" d="M0,0 C 8.8,-6.5 22.0,-6.5 31.4,0 C 22.0,3.8 8.8,4.3 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(68)" d="M0,0 C 7.6,-6.5 19.0,-6.5 27.2,0 C 19.0,3.8 7.6,4.3 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(94)" d="M0,0 C 6.0,-6.5 14.9,-6.5 21.2,0 C 14.9,3.8 6.0,4.3 0,0 Z"/>
+                                </g></g>
+                                <path class="island-trunk" fill="url(#trunkGradient)" d="M202.1,150.0 Q207.1,122.5 209.1,100.3 L211.4,100.3 Q210.0,122.5 207.9,150.0 Z"/>
+                                <g transform="translate(125.2,111.2)"><g class="palm-sway" style="--sway-delay:0.7s">
+                                    <path class="island-frond" transform="rotate(-74)" d="M0,0 C 5.5,-5.2 13.8,-5.2 19.7,0 C 13.8,3.0 5.5,3.5 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(-44)" d="M0,0 C 6.7,-5.2 16.7,-5.2 23.8,0 C 16.7,3.0 6.7,3.5 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(-16)" d="M0,0 C 7.6,-5.2 19.0,-5.2 27.2,0 C 19.0,3.0 7.6,3.5 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(12)" d="M0,0 C 8.0,-5.2 20.0,-5.2 28.6,0 C 20.0,3.0 8.0,3.5 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(40)" d="M0,0 C 7.0,-5.2 17.6,-5.2 25.2,0 C 17.6,3.0 7.0,3.5 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(68)" d="M0,0 C 6.1,-5.2 15.2,-5.2 21.8,0 C 15.2,3.0 6.1,3.5 0,0 Z"/>
+                                    <path class="island-frond" transform="rotate(94)" d="M0,0 C 4.8,-5.2 11.9,-5.2 17.0,0 C 11.9,3.0 4.8,3.5 0,0 Z"/>
+                                </g></g>
+                                <path class="island-trunk" fill="url(#trunkGradient)" d="M112.7,152.0 Q119.1,128.9 124.2,111.2 L126.1,111.2 Q121.4,128.9 117.3,152.0 Z"/>
+                            </g>
+                            <g class="island-flamingo" fill="#f2879e" stroke="#f2879e">
+                                <g transform="translate(340,148)">
+                                    <path d="M0,20 C-1,16 0,12 3,11 C6,10 8,13 7,17 C6,20 3,21 0,20 Z"/>
+                                    <path d="M6,11 C4,7 3,3 5,-1" fill="none" stroke-width="1.6" stroke-linecap="round"/>
+                                    <circle cx="5.6" cy="-2.4" r="2"/>
+                                    <line x1="2" y1="20" x2="2" y2="27" stroke-width="1"/>
+                                </g>
+                            </g>
+                        </svg>
                     </div>
                     <div class="horizon-line"></div>
                 </div>
                 <div class="ocean">
                     <div class="horizon-reflection" aria-hidden="true"></div>
+                    <div class="water-sparkle" aria-hidden="true"></div>
                     <video class="ocean-video" autoplay loop muted playsinline preload="metadata" poster="bottle_1_no_bg.png">
                         <source src="https://cdn.pixabay.com/video/2023/05/06/161880-824623405_large.mp4" type="video/mp4">
                         Your browser does not support the video tag.
@@ -154,30 +219,27 @@
 
     <!-- Composer overlay -->
     <div class="modal-backdrop" id="composer-overlay" hidden>
-        <div class="message-popup" role="dialog" aria-modal="true" aria-labelledby="composer-heading">
-            <button type="button" class="close-button overlay-close" aria-label="Close">&times;</button>
-            <p class="popup-eyebrow">Message in a bottle</p>
-            <h2 id="composer-heading">Send a Message</h2>
+        <div class="message-popup letter-card" role="dialog" aria-modal="true" aria-labelledby="composer-heading">
+            <button type="button" class="letter-close overlay-close close-button" aria-label="Close">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <span class="letter-badge" aria-hidden="true">&#127754;</span>
+            <h2 id="composer-heading" class="visually-hidden">Send a Message</h2>
 
-            <div id="input-area">
-                <div class="composer-field">
-                    <label class="composer-label" for="message-title">Message title</label>
-                    <input type="text" id="message-title" placeholder="Give it a short title" maxlength="10">
-                </div>
-                <div class="composer-field">
-                    <label class="composer-label" for="message-input">Your message</label>
-                    <input type="text" id="message-input" placeholder="Write something you'd like to release..." maxlength="500">
-                </div>
-                <div class="composer-actions">
-                    <button type="button" id="throw-button">
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M10 3h4v3.2c0 .5.2 1 .6 1.4l1.8 1.8c.4.4.6.9.6 1.4V19a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V10.8c0-.5.2-1 .6-1.4l1.8-1.8c.4-.4.6-.9.6-1.4V3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-                            <path d="M9 3h6M8 13.5c1 .8 2 .8 3 0s2-.8 3 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                        </svg>
-                        Release into the ocean
-                    </button>
-                </div>
+            <div id="input-area" class="letter-body">
+                <label class="visually-hidden" for="message-title">Message title</label>
+                <input type="text" id="message-title" class="letter-title-input" placeholder="Give it a short title&hellip;" maxlength="10">
+                <label class="visually-hidden" for="message-input">Your message</label>
+                <textarea id="message-input" class="letter-textarea" placeholder="Hello, I am writing from&hellip; I hope this message reaches your hands. You never know what the tide can bring you." maxlength="500"></textarea>
             </div>
+
+            <button type="button" id="throw-button" class="letter-submit" aria-label="Release into the ocean">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
         </div>
     </div>
 
